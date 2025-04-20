@@ -19,26 +19,18 @@ class LoginController extends Controller
             'username' => 'required|string',
             'password' => 'required',
         ]);
-    
+
         $credentials = $request->only('username', 'password');
-    
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-    
-            switch (Auth::user()->role) {
-                case 'admin':
-                    return redirect()->intended('/admin/dashboard');
-                case 'user':
-                    return redirect()->intended('/user/dashboard');
-                default:
-                    Auth::logout();
-                    return back()->with('error', 'Peran pengguna tidak dikenali.');
-            }
-        }
-    
+
+            return redirect()->route('dashboard');
+        };
+
         return back()->with('error', 'Username atau password salah.');
     }
-    
+
 
     public function logout(Request $request)
     {
