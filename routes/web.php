@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -52,6 +53,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware('role:user')->group(function () {
         Route::get('/filter/{category}', [UserController::class, 'filterByCategory'])->name('product.filter');
+        Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     });
 
     Route::middleware('role:admin')->group(function () {

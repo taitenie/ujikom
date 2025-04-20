@@ -8,11 +8,11 @@
 
     <!-- Footer dengan tombol View & Buy -->
     <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 py-3 footer-buttons">
-      <a href="/" class="btn btn-outline-primary btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
-        <i class="bi bi-eye"></i> View
+      <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-primary btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
+        View
       </a>
       <button class="btn btn-success btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
-        <i class="bi bi-cart-plus"></i> Buy
+        Buy
       </button>
     </div>
 
