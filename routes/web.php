@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopCreationController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -61,7 +62,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/users', UserManagementController::class);
         Route::resource('/orders', UserManagementController::class);
         Route::resource('/categories', CategoryController::class);
-        Route::resource('/shops', UserManagementController::class);
+        Route::resource('/shops', ShopCreationController::class);
     });
 
 

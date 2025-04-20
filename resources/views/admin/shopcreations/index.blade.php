@@ -29,52 +29,51 @@
   <!-- Main Content -->
   <div class="main-content">
     <div class="container mt-4">
-      <h2 class="mb-4">Category List</h2>
+      <h2 class="mb-4">Shop Creation Requests</h2>
 
       @if(session('success'))
       <div class="alert alert-success">{{ session('success') }}</div>
       @endif
-
-      <a href="{{ route('categories.create') }}" class="btn btn-primary mb-3">+ Add Category</a>
 
       <div class="table-responsive">
         <table class="table table-bordered table-striped">
           <thead class="table-dark">
             <tr>
               <th>#</th>
-              <th>Name</th>
+              <th>Shop Name</th>
               <th>Description</th>
-              <th>Actions</th>
+              <th>Status</th>
+              <th>Requested By</th>
+              <th>Date</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            @forelse ($categories as $category)
+            @forelse($shops as $shop)
             <tr>
               <td>{{ $loop->iteration }}</td>
-              <td>{{ $category->name }}</td>
-              <td>{{ $category->description }}</td>
+              <td>{{ $shop->name }}</td>
+              <td>{{ $shop->description }}</td>
+              <td><span class="badge bg-{{ $shop->status === 'approved' ? 'success' : ($shop->status === 'rejected' ? 'danger' : 'warning') }}">{{ ucfirst($shop->status) }}</span></td>
+              <td>{{ $shop->user->username ?? 'Unknown' }}</td>
+              <td>{{ $shop->created_at->format('d M Y') }}</td>
               <td>
-                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this category?')">
-                  @csrf
-                  @method('DELETE')
-                  <button class="btn btn-sm btn-danger">Delete</button>
-                </form>
+                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-status="approved" data-id="{{ $shop->id }}">Approve</button>
+                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-status="rejected" data-id="{{ $shop->id }}">Reject</button>
               </td>
             </tr>
             @empty
             <tr>
-              <td colspan="4" class="text-center">No categories available.</td>
+              <td colspan="7" class="text-center">No shop requests yet.</td>
             </tr>
             @endforelse
           </tbody>
         </table>
       </div>
     </div>
-
-  </div>
   </div>
 
+  <x-modal-shopcreation-confirm />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

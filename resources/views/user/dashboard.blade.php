@@ -64,9 +64,9 @@
     }
 
     .btn-navy {
-    background-color: var(--navy);
-    border-color: var(--navy);
-    color: white;
+      background-color: var(--navy);
+      border-color: var(--navy);
+      color: white;
     }
 
     .btn-navy:hover {
@@ -91,8 +91,6 @@
       font-size: 1rem;
       color: var(--navy);
     }
-
-
   </style>
 </head>
 
@@ -115,10 +113,9 @@
   <!-- Main Content -->
   <div class="container my-4">
     <h1 class="text-navy text-center mt-1">Welcome, <strong>{{ auth()->user()->username }}</strong></h1>
-    <h2 class="mb-3 text-navy">📋 Product Page</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <a href="/" class="btn btn-primary">Request Shop Creation</a>
+      <h2 class="mb-3 text-navy">📋 Product Page</h2>
       <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
         🛒
         <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -161,11 +158,13 @@
     </div>
   </div>
 
+  <x-modal-shopCreation />
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.querySelectorAll('.btn-buy').forEach(button => {
-      button.addEventListener('click', function () {
+      button.addEventListener('click', function() {
         const card = this.closest('.card');
         card.querySelector('.footer-buttons').classList.add('d-none');
         card.querySelector('.quantity-form').classList.remove('d-none');
@@ -173,7 +172,7 @@
     });
 
     document.querySelectorAll('.btn-cancel').forEach(button => {
-      button.addEventListener('click', function () {
+      button.addEventListener('click', function() {
         const card = this.closest('.card');
         card.querySelector('.quantity-form').classList.add('d-none');
         card.querySelector('.footer-buttons').classList.remove('d-none');
@@ -181,7 +180,7 @@
     });
 
     document.querySelectorAll('.btn-ok').forEach(button => {
-      button.addEventListener('click', function () {
+      button.addEventListener('click', function() {
         const card = this.closest('.card');
         const quantity = card.querySelector('.input-quantity').value;
         const productId = this.dataset.id;
