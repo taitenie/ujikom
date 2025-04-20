@@ -3,15 +3,15 @@
     <div class="card-body">
       <h5 class="card-title">{{ e($product->name) }}</h5>
       <p class="text-muted mb-2">{{ e($product->category->name) }}</p>
-      <p class="fw-semibold text-success">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+      <p class="fw-semibold product-price">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
     </div>
 
-    <!-- Footer dengan tombol View & Buy -->
+    <!-- Footer dengan tombol View-->
     <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 py-3 footer-buttons">
-      <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-primary btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
+      <a href="{{ route('products.show', $product->id) }}" class="btn btn-navy-outline btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
         View
       </a>
-      <button class="btn btn-success btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
+      <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
         Buy
       </button>
     </div>
