@@ -16,8 +16,7 @@ class UserManagementController extends Controller
      */
     public function index()
     {
-        $users = User::latest()->get();
-
+        $users = User::all();
         return view('admin.users.index', compact('users'));
     }
 

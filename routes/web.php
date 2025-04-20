@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 
@@ -59,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::resource('/users', UserManagementController::class);
         Route::resource('/orders', UserManagementController::class);
-        Route::resource('/categories', UserManagementController::class);
+        Route::resource('/categories', CategoryController::class);
         Route::resource('/shops', UserManagementController::class);
     });
 
