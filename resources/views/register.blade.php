@@ -4,13 +4,31 @@
     <title>Form Registrasi</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
+        body {
+            background-color: #f3f4f6;
+        }
         .register-box {
             max-width: 700px;
-            margin: 30px auto;
-            margin-top: 80px;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
+            margin: 60px auto;
+            padding: 30px;
+            border-radius: 12px;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+        }
+        h4 {
+            color: #001f3f;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #001f3f;
+            border-color: #001f3f;
+        }
+        .btn-primary:hover {
+            background-color: #003366;
+            border-color: #003366;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
         }
     </style>
 </head>
@@ -99,14 +117,5 @@
             </div>
         </form>
     </div>
-
-    <script>
-        // Reset input values when "Clear" button is clicked
-        document.querySelector('button[type="reset"]').addEventListener('click', function() {
-            document.querySelectorAll('.form-control, .form-check-input, .form-select').forEach(function(input) {
-                input.classList.remove('is-invalid');  // Remove the validation error state
-            });
-        });
-    </script>
 </body>
 </html>

@@ -5,24 +5,29 @@
     left: 0;
     top: 0;
     width: 220px;
-    background-color: #343a40;
+    background-color: #001f3f;
     padding-top: 60px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar a {
-    color: #fff;
-    padding: 12px 20px;
+    color: #f1f1f1;
+    padding: 14px 24px;
     display: block;
     text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
   }
 
   .sidebar a.active {
-    background-color: #007bff;
-    color: white;
+    background-color: #003366;
+    color: #ffffff;
+    font-weight: 600;
   }
 
   .sidebar a:hover {
-    background-color: #495057;
+    background-color: #004080;
+    color: #ffffff;
   }
 </style>
 
