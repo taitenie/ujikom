@@ -25,7 +25,6 @@ class RoleMiddleware
             return $next($request);
         }
 
-        // Jika tidak sesuai, redirect ke halaman login atau halaman lain
-        return redirect('/login')->with('error', 'You do not have permission to access this page.');
+        abort(403, 'Unauthorized action.');
     }
 }
