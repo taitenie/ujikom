@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AdminController;
@@ -53,6 +54,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/filter/{category}', [UserController::class, 'filterByCategory'])->name('product.filter');
     });
 
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('/users', UserManagementController::class);
+        Route::resource('/orders', UserManagementController::class);
+        Route::resource('/categories', UserManagementController::class);
+        Route::resource('/shops', UserManagementController::class);
+    });
+
+
     Route::prefix('cart')->group(function () {
         Route::post('/add', [CartController::class, 'add'])->name('cart.add');
         Route::post('/update', [CartController::class, 'update'])->name('cart.update');
@@ -60,5 +69,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('cart.index');
     });
 
-    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
