@@ -6,16 +6,20 @@
       <p class="fw-semibold text-success">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
     </div>
 
-    <!-- Footer awal dengan tombol View & Buy -->
-    <div class="card-footer d-flex justify-content-around footer-buttons">
-      <a href="/" class="btn btn-sm btn-outline-primary">View</a>
-      <button class="btn btn-sm btn-success btn-buy" data-id="{{ $product->id }}">Buy</button>
+    <!-- Footer dengan tombol View & Buy -->
+    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 py-3 footer-buttons">
+      <a href="/" class="btn btn-outline-primary btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
+        <i class="bi bi-eye"></i> View
+      </a>
+      <button class="btn btn-success btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
+        <i class="bi bi-cart-plus"></i> Buy
+      </button>
     </div>
 
     <!-- Input Quantity, disembunyikan awalnya -->
     <div class="card-footer d-none quantity-form">
-      <div class="text-center w-100">
-        <input type="number" min="1" class="form-control mb-2 input-quantity" value="1">
+      <div class="d-flex flex-column align-items-center w-100">
+        <input type="number" min="1" class="form-control mb-2 input-quantity text-center" value="1" style="max-width: 100px;">
         <div class="d-flex justify-content-center gap-2">
           <button class="btn btn-sm btn-primary btn-ok" data-id="{{ $product->id }}">OK</button>
           <button class="btn btn-sm btn-secondary btn-cancel">Cancel</button>

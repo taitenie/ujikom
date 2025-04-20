@@ -11,7 +11,14 @@
 
 <body>
   <div class="container mt-4">
+    <div class="row mb-4">
+      <div class="col">
+        <h3>Welcome, {{ auth()->user()->username }}</h3>
+      </div>
+    </div>
+    
     <h3>Product Page</h3>
+    <a href="/" class="btn btn-primary mb-3">Request Shop Creation</a>
     <a href="{{ route('cart.index') }}" class="btn position-relative">
       🛒
       <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -35,6 +42,11 @@
         <div class="border p-3">
           <h5>Product Category</h5>
           <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">
+                All
+              </a>
+            </li>
             @foreach ($categories as $category)
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <a href="{{ route('product.filter', $category->id) }}" class="text-decoration-none text-dark">
@@ -43,7 +55,6 @@
               <span class="badge bg-secondary">{{ $category->products_count }}</span>
             </li>
             @endforeach
-
           </ul>
         </div>
       </div>
