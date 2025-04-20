@@ -16,6 +16,42 @@
       margin-left: 220px;
       padding: 30px;
     }
+
+    h3 {
+      color: #001f3f;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background-color: #001f3f;
+      border-color: #001f3f;
+    }
+
+    .btn-primary:hover {
+      background-color: #003366;
+      border-color: #003366;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #001f3f;
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid #ced4da;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #001f3f;
+      box-shadow: 0 0 0 0.2rem rgba(0, 31, 63, 0.25);
+    }
   </style>
 </head>
 
