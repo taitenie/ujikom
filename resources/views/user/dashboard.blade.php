@@ -7,28 +7,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Halaman Produk</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #001f3f;
+      --navy-hover: #003366;
+    }
+
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .logo-placeholder {
+      width: 50px;
+      height: 50px;
+      background-color: #ccc;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .navbar-custom {
+      background-color: var(--navy);
+      border-bottom: 1px solid #001533;
+    }
+
+    .navbar-custom .fw-bold,
+    .navbar-custom .btn,
+    .navbar-custom form button {
+      color: white;
+    }
+
+    .navbar-custom form button:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-primary {
+      background-color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--navy-hover);
+      border-color: var(--navy-hover);
+    }
+
+    .card-header.bg-primary {
+      background-color: var(--navy) !important;
+    }
+
+    .text-navy {
+      color: var(--navy);
+    }
+
+    a.text-dark:hover {
+      color: var(--navy) !important;
+    }
+
+    .btn-navy {
+    background-color: var(--navy);
+    border-color: var(--navy);
+    color: white;
+    }
+
+    .btn-navy:hover {
+      background-color: var(--navy-hover);
+      border-color: var(--navy-hover);
+      color: white;
+    }
+
+    .btn-navy-outline {
+      background-color: transparent;
+      border: 2px solid var(--navy);
+      color: var(--navy);
+    }
+
+    .btn-navy-outline:hover {
+      background-color: var(--navy);
+      color: white;
+    }
+
+
+    .product-price {
+      font-size: 1rem;
+      color: var(--navy);
+    }
+
+
+  </style>
 </head>
 
 <body>
-  <div class="container mt-4">
-    <div class="row mb-4">
-      <div class="col">
-        <h3>Welcome, {{ auth()->user()->username }}</h3>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-2">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <div class="logo-placeholder me-2"></div>
+        <span class="fw-bold">shop</span>
       </div>
+
+      <form action="{{ route('logout') }}" method="POST" class="d-inline">
+        @csrf
+        <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+      </form>
     </div>
-    
-    <h3>Product Page</h3>
-    <a href="/" class="btn btn-primary mb-3">Request Shop Creation</a>
-    <a href="{{ route('cart.index') }}" class="btn position-relative">
-      🛒
-      <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-        {{ session('cart') ? count(session('cart')) : 0 }}
-      </span>
-    </a>
+  </nav>
 
+  <!-- Main Content -->
+  <div class="container my-4">
+    <h1 class="text-navy text-center mt-1">Welcome, <strong>{{ auth()->user()->username }}</strong></h1>
+    <h2 class="mb-3 text-navy">📋 Product Page</h2>
 
-    <div class="row mt-4">
-      <!-- Daftar Produk -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <a href="/" class="btn btn-primary">Request Shop Creation</a>
+      <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
+        🛒
+        <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ session('cart') ? count(session('cart')) : 0 }}
+        </span>
+      </a>
+    </div>
+
+    <div class="row">
+      <!-- Product List -->
       <div class="col-md-9">
         <div class="row row-cols-1 row-cols-md-3 g-4">
           @foreach ($products as $product)
@@ -39,13 +139,13 @@
 
       <!-- Sidebar Kategori -->
       <div class="col-md-3">
-        <div class="border p-3">
-          <h5>Product Category</h5>
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            Product Category
+          </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item">
-              <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">
-                All
-              </a>
+              <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">All</a>
             </li>
             @foreach ($categories as $category)
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -61,10 +161,11 @@
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.querySelectorAll('.btn-buy').forEach(button => {
-      button.addEventListener('click', function() {
+      button.addEventListener('click', function () {
         const card = this.closest('.card');
         card.querySelector('.footer-buttons').classList.add('d-none');
         card.querySelector('.quantity-form').classList.remove('d-none');
@@ -72,7 +173,7 @@
     });
 
     document.querySelectorAll('.btn-cancel').forEach(button => {
-      button.addEventListener('click', function() {
+      button.addEventListener('click', function () {
         const card = this.closest('.card');
         card.querySelector('.quantity-form').classList.add('d-none');
         card.querySelector('.footer-buttons').classList.remove('d-none');
@@ -80,7 +181,7 @@
     });
 
     document.querySelectorAll('.btn-ok').forEach(button => {
-      button.addEventListener('click', function() {
+      button.addEventListener('click', function () {
         const card = this.closest('.card');
         const quantity = card.querySelector('.input-quantity').value;
         const productId = this.dataset.id;
@@ -99,15 +200,12 @@
           card.querySelector('.quantity-form').classList.add('d-none');
           card.querySelector('.footer-buttons').classList.remove('d-none');
 
-          // Update badge cart count
           const badge = document.querySelector('#cart-badge');
           if (badge) badge.innerText = data.cartCount;
         });
       });
     });
   </script>
-
-
 </body>
 
 </html>
