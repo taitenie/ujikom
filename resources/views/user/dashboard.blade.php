@@ -86,7 +86,6 @@
       color: white;
     }
 
-
     .product-price {
       font-size: 1rem;
       color: var(--navy);
@@ -119,7 +118,7 @@
       <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
         🛒
         <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          {{ session('cart') ? count(session('cart')) : 0 }}
+          {{ auth()->user()->cart ? count(auth()->user()->cart->items) : 0 }}
         </span>
       </a>
     </div>
@@ -129,7 +128,25 @@
       <div class="col-md-9">
         <div class="row row-cols-1 row-cols-md-3 g-4">
           @foreach ($products as $product)
-          <x-product-card :product="$product" />
+          <div class="col">
+            <div class="card">
+              <img src="{{ asset('storage/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ $product->name }}</h5>
+                <p class="product-price">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
+                <div class="footer-buttons">
+                  <button class="btn btn-navy btn-buy" data-id="{{ $product->id }}">Buy</button>
+                </div>
+                <div class="quantity-form d-none">
+                  <input type="number" class="form-control input-quantity" value="1" min="1">
+                  <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-navy btn-ok" data-id="{{ $product->id }}">OK</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           @endforeach
         </div>
       </div>
@@ -158,8 +175,6 @@
     </div>
   </div>
 
-  <x-modal-shopCreation />
-
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -185,7 +200,8 @@
         const quantity = card.querySelector('.input-quantity').value;
         const productId = this.dataset.id;
 
-        fetch('{{ route("cart.add") }}', {
+        // Menambahkan item ke keranjang
+        fetch('{{ route("cart.items.store") }}', {
           method: 'POST',
           headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -196,9 +212,13 @@
             quantity: Number(quantity)
           })
         }).then(res => res.json()).then(data => {
+
+          console.log(data);
+          // Menampilkan kembali tombol beli dan menyembunyikan input quantity
           card.querySelector('.quantity-form').classList.add('d-none');
           card.querySelector('.footer-buttons').classList.remove('d-none');
 
+          // Memperbarui jumlah item di cart
           const badge = document.querySelector('#cart-badge');
           if (badge) badge.innerText = data.cartCount;
         });

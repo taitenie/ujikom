@@ -101,7 +101,7 @@
 
     <a href="/" class="btn btn-navy-outline mb-3">← Back to Home</a>
 
-    @if(session('cart') && count($cart) > 0)
+    @if($cart && $cart->items->count() > 0)
     <div class="table-responsive">
       <table class="table table-bordered table-hover bg-white">
         <thead class="table-light">
@@ -114,48 +114,120 @@
           </tr>
         </thead>
         <tbody>
-          @foreach($cart as $productId => $item)
+          @foreach($cart->items as $item)
           <tr>
-            <td>{{ $item['name'] }}</td>
-            <td>Rp{{ number_format($item['price'], 0, ',', '.') }}</td>
+            <td>{{ $item->product->name }}</td>
+            <td>Rp{{ number_format($item->product->price, 0, ',', '.') }}</td>
             <td>
-              <form action="{{ route('cart.update') }}" method="POST" class="d-flex align-items-center gap-2">
-                @csrf
-                <input type="hidden" name="product_id" value="{{ $productId }}">
+              <div id="item-{{ $item->id }}" class="d-flex align-items-center gap-2">
                 <div class="btn-group" role="group">
-                  <button type="submit" name="action" value="decrease" class="btn btn-sm btn-outline-secondary">-</button>
-                  <span class="px-2">{{ $item['quantity'] }}</span>
-                  <button type="submit" name="action" value="increase" class="btn btn-sm btn-outline-secondary">+</button>
-                </div>
-              </form>
-            </td>
-            <td>Rp{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</td>
-            <td>
-              <form action="{{ route('cart.remove') }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <input type="hidden" name="product_id" value="{{ $productId }}">
-                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-              </form>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
+                  <button class="btn-update-qty btn btn-sm btn-outline-secondary"
+                    data-id="{{ $item->id }}"
+                    data-action="decrease">-</button>
 
-    <div class="cart-summary">
-      <h5>Total Quantity: <strong>{{ $totalQuantity }}</strong></h5>
-      <h5>Total Price: <strong>Rp{{ number_format($totalPrice, 0, ',', '.') }}</strong></h5>
+                  <span class="px-2" id="qty-{{ $item->id }}">{{ $item->quantity }}</span>
+
+                  <button class="btn-update-qty btn btn-sm btn-outline-secondary"
+                    data-id="{{ $item->id }}"
+                    data-action="increase">+</button>
+                </div>
+              </div>
     </div>
-    @else
-    <div class="alert alert-info mt-4" role="alert">
-      Your cart is empty.
-    </div>
-    @endif
+    </td>
+    <td>Rp{{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}</td>
+    <td>
+      <form action="{{ route('cart.items.destroy', $item) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+      </form>
+    </td>
+    </tr>
+    @endforeach
+    </tbody>
+    </table>
   </div>
 
+  <div class="cart-summary">
+    <h5>Total Quantity: <strong>{{ $cart->items->sum('quantity') }}</strong></h5>
+    <h5>Total Price:
+      <strong>
+        Rp{{ number_format($cart->items->sum(fn($item) => $item->product->price * $item->quantity), 0, ',', '.') }}
+      </strong>
+    </h5>
+  </div>
+  @else
+  <div class="alert alert-info mt-4" role="alert">
+    Your cart is empty.
+  </div>
+  @endif
+  </div>
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function numberFormat(number) {
+      if (typeof number !== 'number' || isNaN(number)) {
+        return '0'; // Kembalikan nilai default jika bukan angka
+      }
+      return number.toLocaleString('id-ID');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const buttons = document.querySelectorAll('.btn-update-qty');
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const itemId = button.dataset.id;
+          const action = button.dataset.action;
+          const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+          fetch(`/cart/items/${itemId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'X-HTTP-Method-Override': 'PATCH'
+              },
+              body: JSON.stringify({
+                action: action
+              })
+            })
+            .then(res => res.json())
+            .then(data => {
+              const qtySpan = document.getElementById(`qty-${itemId}`);
+              const row = qtySpan.closest('tr');
+
+              console.log(data);
+
+              if (data.deleted) {
+                row.remove();
+              } else {
+                qtySpan.textContent = data.itemQuantity;
+
+                // Update total harga produk
+                const totalCell = row.querySelector('td:nth-child(4)');
+                totalCell.textContent = 'Rp' + numberFormat(data.itemTotal);
+              }
+
+              // Update total quantity dan total harga cart
+              const totalQty = document.querySelector('.cart-summary h5 strong');
+              const totalPrice = document.querySelectorAll('.cart-summary h5 strong')[1];
+
+              if (totalQty && totalPrice) {
+                totalQty.textContent = data.cartTotalQuantity;
+                totalPrice.textContent = 'Rp' + numberFormat(data.cartTotalPrice);
+              }
+
+              // Update cart count di navbar (jika ada)
+              const cartCount = document.getElementById('cart-count');
+              if (cartCount) cartCount.textContent = data.cartCount;
+            })
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

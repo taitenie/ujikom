@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopCreationController;
 use App\Http\Controllers\UserController;
@@ -56,6 +57,17 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:user')->group(function () {
         Route::get('/filter/{category}', [UserController::class, 'filterByCategory'])->name('product.filter');
         Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+        Route::prefix('cart')->group(function () {
+            Route::get('/', [CartController::class, 'index'])->name('cart.index');
+            Route::post('/', [CartController::class, 'store'])->name('cart.store');
+            Route::patch('/item/{item}', [CartController::class, 'update'])->name('cart.update');
+            Route::delete('/item/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+            Route::post('/items', [CartItemController::class, 'store'])->name('cart.items.store');
+            Route::patch('/items/{item}', [CartItemController::class, 'update'])->name('cart.items.update');
+            Route::delete('/items/{item}', [CartItemController::class, 'destroy'])->name('cart.items.destroy');
+        });
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -66,12 +78,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    Route::prefix('cart')->group(function () {
-        Route::post('/add', [CartController::class, 'add'])->name('cart.add');
-        Route::post('/update', [CartController::class, 'update'])->name('cart.update');
-        Route::delete('/remove', [CartController::class, 'remove'])->name('cart.remove');
-        Route::get('/', [CartController::class, 'index'])->name('cart.index');
-    });
+
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
