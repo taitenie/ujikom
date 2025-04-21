@@ -157,13 +157,21 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-3 text-navy">📋 Product Page</h2>
-      <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
-        🛒
-        <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          {{ auth()->user()->cart ? count(auth()->user()->cart->items) : 0 }}
-        </span>
-      </a>
-    </div>
+      <div class="d-flex gap-3">
+        <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
+          🛒
+          <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ auth()->user()->cart ? count(auth()->user()->cart->items) : 0 }}
+          </span>
+        </a>
+        <a href=/ class="btn position-relative btn-outline-dark">
+          📦
+          <span id="order-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ 1 }}
+          </span>
+        </a>
+      </div>
+    </div>    
 
     <div class="row">
       <!-- Product List -->
@@ -176,8 +184,13 @@
               <div class="card-body">
                 <h5 class="card-title">{{ $product->name }}</h5>
                 <p class="product-price">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
-                <div class="footer-buttons">
-                  <button class="btn btn-navy btn-buy" data-id="{{ $product->id }}">Buy</button>
+                <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 py-3 footer-buttons">
+                  <a href="{{ route('products.show', $product->id) }}" class="btn btn-navy-outline btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
+                    View
+                  </a>
+                  <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
+                    Buy
+                  </button>
                 </div>
                 <div class="quantity-form d-none">
                   <input type="number" class="form-control input-quantity" value="1" min="1">
