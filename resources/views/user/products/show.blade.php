@@ -113,15 +113,7 @@
         <p class="text-muted mb-1">Category: <strong>{{ $product->category->name ?? 'Uncategorized' }}</strong></p>
         <div class="text-price mb-3">Rp{{ number_format($product->price, 0, ',', '.') }}</div>
         <p>{{ $product->description }}</p>
-
-        <form action="{{ route('cart.items.store') }}" method="POST" class="mt-3">
-          @csrf
-          <input type="hidden" name="product_id" value="{{ $product->id }}">
-          <div class="input-group" style="max-width: 200px;">
-            <input type="number" name="quantity" class="form-control" value="1" min="1" data-stock="{{ $product->stock }}">
-            <button class="btn btn-navy" type="submit">Add to Cart</button>
-          </div>
-        </form>
+        <p class="text-muted mb-1">Stock: <strong>{{ $product->stock }}</strong></p>
 
         <a href="{{ route('dashboard') }}" class="btn btn-link mt-3 text-decoration-none text-navy">← Back to Products</a>
       </div>
@@ -129,16 +121,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Tambahkan atribut data-stock pada input quantity
-    document.querySelector('input[name="quantity"]').addEventListener('input', function() {
-      const maxStock = this.getAttribute('data-stock'); // Ambil nilai stok dari atribut data-stock
-      if (this.value > maxStock) {
-        this.value = maxStock;
-        alert('Quantity exceeds available stock!');
-      }
-    });
-  </script>
 </body>
 
 </html>
