@@ -114,6 +114,28 @@
       color: #007bff;
       /* Mengubah warna teks saat hover */
     }
+
+    .card-img-top {
+      height: 200px;
+      /* Atur tinggi gambar */
+      object-fit: cover;
+      /* Memastikan gambar tetap proporsional */
+      object-position: center;
+      /* Pusatkan gambar */
+    }
+
+    .card-products {
+      height: 100%;
+      /* Pastikan semua kartu memiliki tinggi yang sama */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-body {
+      flex-grow: 1;
+      /* Isi ruang yang tersisa di kartu */
+    }
   </style>
 </head>
 
@@ -125,29 +147,33 @@
         <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
         <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
-  
+
       <!-- Dropdown Menu with Avatar Icon -->
       <div class="dropdown">
+        @auth
         <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="rounded-circle" style="width: 35px; height: 35px; background-color: #fff; background-image: url('https://via.placeholder.com/35'); background-size: cover; margin-right: 8px;"></div>
           <span class="fs-6">{{ auth()->user()->username }}</span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
           <li><a class="dropdown-item" href="{{ route('profile.index') }}">
-              <i class="bi bi-person-fill"></i> Profile
+              Profile
             </a></li>
           <li>
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
               @csrf
               <button type="submit" class="dropdown-item">
-                <i class="bi bi-box-arrow-right"></i> Logout
+                Logout
               </button>
             </form>
           </li>
         </ul>
+        @else
+        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light">Login</a>
+        @endauth
       </div>
     </div>
-  </nav>  
+  </nav>
 
 
   <!-- Main Content -->
@@ -155,6 +181,7 @@
   <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-3 text-navy">📋 Product Page</h2>
+      @auth
       <div class="d-flex gap-3">
         <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
           🛒
@@ -169,6 +196,7 @@
           </span>
         </a>
       </div>
+      @endauth
     </div>
 
     <div class="row">
@@ -177,20 +205,24 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
           @foreach ($products as $product)
           <div class="col">
-            <div class="card">
+            <div class="card card-products">
               <img src="{{ asset('storage/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}">
               <div class="card-body">
                 <h5 class="card-title">{{ $product->name }}</h5>
                 <p class="product-price">Rp{{ number_format($product->price, 0, ',', '.') }}</p>
                 <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center px-3 py-3 footer-buttons">
+                  @auth
                   <a href="{{ route('products.show', $product->id) }}" class="btn btn-navy-outline btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
                     View
                   </a>
-                  <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" 
-                    data-id="{{ $product->id }}" 
+                  <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2"
+                    data-id="{{ $product->id }}"
                     data-stock="{{ $product->stock }}">
                     Buy
                   </button>
+                  @else
+                  <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100 ms-2">Login to Buy</a>
+                  @endauth
                 </div>
                 <div class="quantity-form d-none">
                   <input type="number" class="form-control input-quantity" value="1" min="1">
@@ -231,95 +263,94 @@
   </div>
 
   <!-- Scripts -->
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  function showAlert(message, type = 'danger') {
-    const alertContainer = document.getElementById('alert-container');
-    alertContainer.innerHTML = `
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function showAlert(message, type = 'danger') {
+      const alertContainer = document.getElementById('alert-container');
+      alertContainer.innerHTML = `
       <div class="alert alert-${type} alert-dismissible fade show" role="alert" id="custom-alert">
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     `;
-  }
-
-  function removeAlert() {
-    const alertEl = document.getElementById('custom-alert');
-    if (alertEl) {
-      alertEl.remove();
     }
-  }
 
-  document.querySelectorAll('.btn-buy').forEach(button => {
-    button.addEventListener('click', function () {
-      const card = this.closest('.card');
-      const quantityInput = card.querySelector('.input-quantity');
-      const stock = this.dataset.stock;
+    function removeAlert() {
+      const alertEl = document.getElementById('custom-alert');
+      if (alertEl) {
+        alertEl.remove();
+      }
+    }
 
-      quantityInput.max = stock;
-      quantityInput.value = 1;
+    document.querySelectorAll('.btn-buy').forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.card');
+        const quantityInput = card.querySelector('.input-quantity');
+        const stock = this.dataset.stock;
 
-      card.querySelector('.footer-buttons').classList.add('d-none');
-      card.querySelector('.quantity-form').classList.remove('d-none');
-    });
-  });
+        quantityInput.max = stock;
+        quantityInput.value = 1;
 
-  document.querySelectorAll('.btn-cancel').forEach(button => {
-    button.addEventListener('click', function () {
-      const card = this.closest('.card');
-      card.querySelector('.quantity-form').classList.add('d-none');
-      card.querySelector('.footer-buttons').classList.remove('d-none');
-      removeAlert(); // Hapus alert jika ada
-    });
-  });
-
-  // ✅ Hapus alert jika quantity berubah
-  document.querySelectorAll('.input-quantity').forEach(input => {
-    input.addEventListener('input', () => {
-      removeAlert();
-    });
-  });
-
-  document.querySelectorAll('.btn-ok').forEach(button => {
-    button.addEventListener('click', function () {
-      const card = this.closest('.card');
-      const quantity = card.querySelector('.input-quantity').value;
-      const productId = this.dataset.id;
-
-      fetch('{{ route("cart.items.store") }}', {
-        method: 'POST',
-        headers: {
-          'X-CSRF-TOKEN': '{{ csrf_token() }}',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          product_id: productId,
-          quantity: Number(quantity)
-        })
-      })
-      .then(async res => {
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || 'Terjadi kesalahan.');
-        }
-        return data;
-      })
-      .then(data => {
-        card.querySelector('.quantity-form').classList.add('d-none');
-        card.querySelector('.footer-buttons').classList.remove('d-none');
-
-        const badge = document.querySelector('#cart-badge');
-        if (badge) badge.innerText = data.cartCount;
-
-        removeAlert(); // Hapus alert kalau sukses
-      })
-      .catch(err => {
-        showAlert(err.message); // Tampilkan alert error
+        card.querySelector('.footer-buttons').classList.add('d-none');
+        card.querySelector('.quantity-form').classList.remove('d-none');
       });
     });
-  });
-</script>
+
+    document.querySelectorAll('.btn-cancel').forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.card');
+        card.querySelector('.quantity-form').classList.add('d-none');
+        card.querySelector('.footer-buttons').classList.remove('d-none');
+        removeAlert(); // Hapus alert jika ada
+      });
+    });
+
+    // ✅ Hapus alert jika quantity berubah
+    document.querySelectorAll('.input-quantity').forEach(input => {
+      input.addEventListener('input', () => {
+        removeAlert();
+      });
+    });
+
+    document.querySelectorAll('.btn-ok').forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.card');
+        const quantity = card.querySelector('.input-quantity').value;
+        const productId = this.dataset.id;
+
+        fetch('{{ route("cart.items.store") }}', {
+            method: 'POST',
+            headers: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              product_id: productId,
+              quantity: Number(quantity)
+            })
+          })
+          .then(async res => {
+            const data = await res.json();
+            if (!res.ok) {
+              throw new Error(data.message || 'Terjadi kesalahan.');
+            }
+            return data;
+          })
+          .then(data => {
+            card.querySelector('.quantity-form').classList.add('d-none');
+            card.querySelector('.footer-buttons').classList.remove('d-none');
+
+            const badge = document.querySelector('#cart-badge');
+            if (badge) badge.innerText = data.cartCount;
+
+            removeAlert(); // Hapus alert kalau sukses
+          })
+          .catch(err => {
+            showAlert(err.message); // Tampilkan alert error
+          });
+      });
+    });
+  </script>
 </body>
 
 </html>

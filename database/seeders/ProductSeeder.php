@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Mengukur suhu tubuh secara akurat',
                 'price' => 75000,
                 'stock' => 50,
-                'image' => null,
+                'image' => 'products/termometer.jpg', // Path ke gambar
                 'category_id' => $alatMedis->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -30,7 +30,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Mengukur tekanan darah dengan akurasi tinggi',
                 'price' => 150000,
                 'stock' => 30,
-                'image' => null,
+                'image' => 'products/tensimeter.jpg', // Path ke gambar
                 'category_id' => $alatMedis->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -40,7 +40,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Obat penurun panas dan pereda nyeri',
                 'price' => 15000,
                 'stock' => 200,
-                'image' => null,
+                'image' => 'products/paracetamol.jpg', // Path ke gambar
                 'category_id' => $obat->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -50,7 +50,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Antibiotik untuk infeksi bakteri ringan hingga sedang',
                 'price' => 25000,
                 'stock' => 150,
-                'image' => null,
+                'image' => 'products/amox.jpg', // Path ke gambar
                 'category_id' => $obat->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -60,7 +60,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Perlindungan dari bakteri dan virus',
                 'price' => 50000,
                 'stock' => 300,
-                'image' => null,
+                'image' => 'products/masker.webp', // Path ke gambar
                 'category_id' => $perawatan->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -70,7 +70,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Membersihkan tangan tanpa air, efektif membunuh kuman',
                 'price' => 30000,
                 'stock' => 100,
-                'image' => null,
+                'image' => 'products/sanitizer.jpg', // Path ke gambar
                 'category_id' => $perawatan->id,
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -61,21 +61,16 @@ class CartItemController extends Controller
     public function update(Request $request, CartItem $item)
     {
         $request->validate([
-            'quantity' => 'required|integer|min:1',
+            'action' => 'required|in:increase,decrease',
         ]);
 
         if ($item->cart->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $item->update([
-            'quantity' => $request->quantity,
-        ]);
+        $message = 'Cart updated.';
+        $deleted = false;
 
-<<<<<<< HEAD
-        $cart = $item->cart->fresh();
-        $item = $item->fresh();
-=======
         if ($request->action === 'increase') {
             if ($item->quantity < $item->product->stock) {
                 $item->increment('quantity');
@@ -95,11 +90,11 @@ class CartItemController extends Controller
         }
 
         $cart = $item->cart;
->>>>>>> origin/main
 
         return response()->json([
             'cartCount' => $cart->items->count(),
-            'message' => 'Cart updated.',
+            'message' => $message,
+            'deleted' => $deleted,
             'itemId' => $item->id,
             'itemQuantity' => $item->quantity,
             'itemTotal' => $item->product->price * $item->quantity,

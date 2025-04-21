@@ -36,7 +36,6 @@ Route::get('/', function () {
 | Public Authentication Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'index'])->name('register.form');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -47,17 +46,30 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Shared Dashboard Route (Guest & Auth)
+|--------------------------------------------------------------------------
+*/
+Route::get('/dashboard', function () {
+    if (Auth::check()) {
+        return match (Auth::user()->role) {
+            'admin' => app(AdminController::class)->index(),
+            'user' => app(UserController::class)->index(),
+            default => abort(403),
+        };
+    }
+
+    // Guest tetap bisa akses dashboard user (read-only)
+    return app(UserController::class)->index();
+})->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', fn() => match (Auth::user()->role) {
-        'admin' => app(AdminController::class)->index(),
-        'user' => app(UserController::class)->index(),
-        default => abort(403),
-    })->name('dashboard');
 
+    // USER ROUTES
     Route::middleware('role:user')->group(function () {
         Route::get('/filter/{category}', [UserController::class, 'filterByCategory'])->name('product.filter');
         Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -79,6 +91,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/struk/{struk}', [StrukController::class, 'show'])->name('struk.show');
     });
 
+    // ADMIN ROUTES
     Route::middleware('role:admin')->group(function () {
         Route::resource('/users', UserManagementController::class);
 
