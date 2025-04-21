@@ -15,7 +15,7 @@ class CartItemController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         $user = Auth::user();
@@ -23,21 +23,35 @@ class CartItemController extends Controller
         // Ambil atau buat cart milik user
         $cart = Cart::firstOrCreate(['user_id' => $user->id]);
 
+        $product = Product::findOrFail($request->product_id);
+        $requestedQty = (int) $request->quantity;
+
+        // Cek apakah item sudah ada di cart
         $item = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $request->product_id)
+            ->where('product_id', $product->id)
             ->first();
 
+        // Total quantity yang diminta
+        $existingQty = $item ? $item->quantity : 0;
+        $totalRequested = $existingQty + $requestedQty;
+
+        if ($totalRequested > $product->stock) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Jumlah melebihi stok yang tersedia.'
+            ], 400);
+        }
+
         if ($item) {
-            $item->quantity += $request->quantity;
+            $item->quantity = $totalRequested;
             $item->save();
         } else {
             $cart->items()->create([
-                'product_id' => $request->product_id,
-                'quantity' => $request->quantity,
+                'product_id' => $product->id,
+                'quantity' => $requestedQty,
             ]);
         }
 
-        // Mengembalikan jumlah item dalam cart sebagai response JSON
         return response()->json([
             'cartCount' => $cart->items->count()
         ]);
@@ -58,7 +72,13 @@ class CartItemController extends Controller
         $deleted = false;
 
         if ($request->action === 'increase') {
-            $item->increment('quantity');
+            if ($item->quantity < $item->product->stock) {
+                $item->increment('quantity');
+            } else {
+                return response()->json([
+                    'message' => 'Stok tidak mencukupi.'
+                ], 400);
+            }
         } elseif ($request->action === 'decrease') {
             if ($item->quantity > 1) {
                 $item->decrement('quantity');
@@ -82,7 +102,6 @@ class CartItemController extends Controller
             'cartTotalPrice' => $cart->items->sum(fn($i) => $i->product->price * $i->quantity),
         ]);
     }
-
 
     // Hapus item dari cart
     public function destroy(CartItem $item)

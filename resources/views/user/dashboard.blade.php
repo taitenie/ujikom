@@ -119,19 +119,18 @@
 
 <body>
   <!-- Header -->
-  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-2">
+  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-        <div class="logo-placeholder me-2"></div>
-        <span class="fw-bold">shop</span>
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
+        <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
-
+  
       <!-- Dropdown Menu with Avatar Icon -->
       <div class="dropdown">
         <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <!-- Avatar Icon (can replace with an image of the user) -->
-          <div class="rounded-circle" style="width: 30px; height: 30px; background-color: #fff; background-image: url('https://via.placeholder.com/30'); background-size: cover; margin-right: 8px;"></div>
-          <span>{{ auth()->user()->username }}</span>
+          <div class="rounded-circle" style="width: 35px; height: 35px; background-color: #fff; background-image: url('https://via.placeholder.com/35'); background-size: cover; margin-right: 8px;"></div>
+          <span class="fs-6">{{ auth()->user()->username }}</span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
           <li><a class="dropdown-item" href="{{ route('profile.index') }}">
@@ -148,13 +147,12 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </nav>  
 
 
   <!-- Main Content -->
+  <div class="container mt-3" id="alert-container"></div>
   <div class="container my-4">
-    <h1 class="text-navy text-center mt-1">Welcome, <strong>{{ auth()->user()->username }}</strong></h1>
-
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-3 text-navy">📋 Product Page</h2>
       <div class="d-flex gap-3">
@@ -188,7 +186,9 @@
                   <a href="{{ route('products.show', $product->id) }}" class="btn btn-navy-outline btn-view w-100 me-2 d-flex justify-content-center align-items-center gap-2">
                     View
                   </a>
-                  <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" data-id="{{ $product->id }}">
+                  <button class="btn btn-navy btn-buy w-100 ms-2 d-flex justify-content-center align-items-center gap-2" 
+                    data-id="{{ $product->id }}" 
+                    data-stock="{{ $product->stock }}">
                     Buy
                   </button>
                 </div>
@@ -231,55 +231,95 @@
   </div>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.querySelectorAll('.btn-buy').forEach(button => {
-      button.addEventListener('click', function() {
-        const card = this.closest('.card');
-        card.querySelector('.footer-buttons').classList.add('d-none');
-        card.querySelector('.quantity-form').classList.remove('d-none');
-      });
-    });
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function showAlert(message, type = 'danger') {
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.innerHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert" id="custom-alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+  }
 
-    document.querySelectorAll('.btn-cancel').forEach(button => {
-      button.addEventListener('click', function() {
-        const card = this.closest('.card');
+  function removeAlert() {
+    const alertEl = document.getElementById('custom-alert');
+    if (alertEl) {
+      alertEl.remove();
+    }
+  }
+
+  document.querySelectorAll('.btn-buy').forEach(button => {
+    button.addEventListener('click', function () {
+      const card = this.closest('.card');
+      const quantityInput = card.querySelector('.input-quantity');
+      const stock = this.dataset.stock;
+
+      quantityInput.max = stock;
+      quantityInput.value = 1;
+
+      card.querySelector('.footer-buttons').classList.add('d-none');
+      card.querySelector('.quantity-form').classList.remove('d-none');
+    });
+  });
+
+  document.querySelectorAll('.btn-cancel').forEach(button => {
+    button.addEventListener('click', function () {
+      const card = this.closest('.card');
+      card.querySelector('.quantity-form').classList.add('d-none');
+      card.querySelector('.footer-buttons').classList.remove('d-none');
+      removeAlert(); // Hapus alert jika ada
+    });
+  });
+
+  // ✅ Hapus alert jika quantity berubah
+  document.querySelectorAll('.input-quantity').forEach(input => {
+    input.addEventListener('input', () => {
+      removeAlert();
+    });
+  });
+
+  document.querySelectorAll('.btn-ok').forEach(button => {
+    button.addEventListener('click', function () {
+      const card = this.closest('.card');
+      const quantity = card.querySelector('.input-quantity').value;
+      const productId = this.dataset.id;
+
+      fetch('{{ route("cart.items.store") }}', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': '{{ csrf_token() }}',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: Number(quantity)
+        })
+      })
+      .then(async res => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || 'Terjadi kesalahan.');
+        }
+        return data;
+      })
+      .then(data => {
         card.querySelector('.quantity-form').classList.add('d-none');
         card.querySelector('.footer-buttons').classList.remove('d-none');
+
+        const badge = document.querySelector('#cart-badge');
+        if (badge) badge.innerText = data.cartCount;
+
+        removeAlert(); // Hapus alert kalau sukses
+      })
+      .catch(err => {
+        showAlert(err.message); // Tampilkan alert error
       });
     });
-
-    document.querySelectorAll('.btn-ok').forEach(button => {
-      button.addEventListener('click', function() {
-        const card = this.closest('.card');
-        const quantity = card.querySelector('.input-quantity').value;
-        const productId = this.dataset.id;
-
-        // Menambahkan item ke keranjang
-        fetch('{{ route("cart.items.store") }}', {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            product_id: productId,
-            quantity: Number(quantity)
-          })
-        }).then(res => res.json()).then(data => {
-
-          console.log(data);
-          // Menampilkan kembali tombol beli dan menyembunyikan input quantity
-          card.querySelector('.quantity-form').classList.add('d-none');
-          card.querySelector('.footer-buttons').classList.remove('d-none');
-
-          // Memperbarui jumlah item di cart
-          const badge = document.querySelector('#cart-badge');
-          if (badge) badge.innerText = data.cartCount;
-        });
-      });
-    });
-  </script>
+  });
+</script>
 </body>
 
 </html>
