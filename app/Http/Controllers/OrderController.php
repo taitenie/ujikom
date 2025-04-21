@@ -46,7 +46,7 @@ class OrderController extends Controller
         $cart->items()->delete();
         $cart->delete();
 
-        return redirect()->route('struk.index', ['order' => $order->id])->with('success', 'Checkout successful. Your order is being processed.');
+        return redirect()->route('struk.show', ['struk' => $order->id])->with('success', 'Checkout successful. Your order is being processed.');
     }
 
     public function index()

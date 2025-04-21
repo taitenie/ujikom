@@ -99,7 +99,7 @@
         <div class="text-price mb-3">Rp{{ number_format($product->price, 0, ',', '.') }}</div>
         <p>{{ $product->description }}</p>
 
-        <form action="{{ route('cart.store', $product->id) }}" method="POST" class="mt-3">
+        <form action="{{ route('cart.items.store', $product->id) }}" method="POST" class="mt-3">
           @csrf
           <div class="input-group" style="max-width: 200px;">
             <input type="number" name="quantity" class="form-control" value="1" min="1">

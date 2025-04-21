@@ -15,6 +15,7 @@ class CartItemController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
+            'quantity' => 'required',
         ]);
 
         $user = Auth::user();
@@ -27,11 +28,12 @@ class CartItemController extends Controller
             ->first();
 
         if ($item) {
-            $item->increment('quantity');
+            $item->quantity += $request->quantity;
+            $item->save();
         } else {
             $cart->items()->create([
                 'product_id' => $request->product_id,
-                'quantity' => 1,
+                'quantity' => $request->quantity,
             ]);
         }
 
