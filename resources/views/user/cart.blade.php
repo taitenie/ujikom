@@ -76,22 +76,50 @@
       border: 1px solid #dee2e6;
       border-radius: 0.5rem;
     }
+
+    .dropdown-item {
+      color: #000 !important;
+      /* Mengatur warna teks menjadi hitam */
+    }
+
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+      /* Menambahkan efek hover dengan latar belakang terang */
+      color: #007bff;
+      /* Mengubah warna teks saat hover */
+    }
   </style>
 </head>
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-2">
+  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-        <div class="logo-placeholder me-2"></div>
-        <span class="fw-bold">shop</span>
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
+        <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
 
-      <form action="{{ route('logout') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-      </form>
+      <!-- Dropdown Menu with Avatar Icon -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="rounded-circle" style="width: 35px; height: 35px; background-color: #fff; background-image: url('https://via.placeholder.com/35'); background-size: cover; margin-right: 8px;"></div>
+          <span class="fs-6">{{ auth()->user()->username }}</span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="{{ route('profile.index') }}">
+              <i class="bi bi-person-fill"></i> Profile
+            </a></li>
+          <li>
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="dropdown-item">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
@@ -129,64 +157,63 @@
                   <button class="btn btn-sm btn-danger d-none btn-cancel">❌</button>
                 </div>
               </div>
-    </div>
-    </td>
-    <td>Rp{{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}</td>
-    <td>
-      <form action="{{ route('cart.items.destroy', $item) }}" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-      </form>
-    </td>
-    </tr>
-    @endforeach
-    </tbody>
-    </table>
-  </div>
-
-  <div class="cart-summary">
-    <h5>Total Quantity: <strong>{{ $cart->items->sum('quantity') }}</strong></h5>
-    <h5>Total Price:
-      <strong>
-        Rp{{ number_format($cart->items->sum(fn($item) => $item->product->price * $item->quantity), 0, ',', '.') }}
-      </strong>
-    </h5>
-  </div>
-
-  <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
-    @csrf
-
-    <div class="mb-3">
-      <label for="payment_type" class="form-label">Payment Type</label>
-      <select name="payment_type" id="payment_type" class="form-select" required>
-        <option value="prepaid">Prepaid</option>
-        <option value="postpaid">Postpaid</option>
-      </select>
+            </td>
+            <td>Rp{{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}</td>
+            <td>
+              <form action="{{ route('cart.items.destroy', $item) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
 
-    <div class="mb-3">
-      <label for="payment_method" class="form-label">Payment Method</label>
-      <select name="payment_method" id="payment_method" class="form-select" required>
-        <option value="bank">Bank Transfer</option>
-        <option value="paypal">Paypal</option>
-        <option value="cash">Cash</option>
-      </select>
+    <div class="cart-summary">
+      <h5>Total Quantity: <strong>{{ $cart->items->sum('quantity') }}</strong></h5>
+      <h5>Total Price:
+        <strong>
+          Rp{{ number_format($cart->items->sum(fn($item) => $item->product->price * $item->quantity), 0, ',', '.') }}
+        </strong>
+      </h5>
     </div>
 
-    <div class="mb-3">
-      <label for="bank_name" class="form-label">Bank Name (Opsional)</label>
-      <input type="text" name="bank_name" id="bank_name" class="form-control">
+    <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
+      @csrf
+
+      <div class="mb-3">
+        <label for="payment_type" class="form-label">Payment Type</label>
+        <select name="payment_type" id="payment_type" class="form-select" required>
+          <option value="prepaid">Prepaid</option>
+          <option value="postpaid">Postpaid</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="payment_method" class="form-label">Payment Method</label>
+        <select name="payment_method" id="payment_method" class="form-select" required>
+          <option value="bank">Bank Transfer</option>
+          <option value="paypal">Paypal</option>
+          <option value="cash">Cash</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="bank_name" class="form-label">Bank Name (Opsional)</label>
+        <input type="text" name="bank_name" id="bank_name" class="form-control">
+      </div>
+
+      <button type="submit" class="btn btn-navy">Checkout</button>
+    </form>
+
+    @else
+    <div class="alert alert-info mt-4" role="alert">
+      Your cart is empty.
     </div>
-
-    <button type="submit" class="btn btn-navy">Checkout</button>
-  </form>
-
-  @else
-  <div class="alert alert-info mt-4" role="alert">
-    Your cart is empty.
-  </div>
-  @endif
+    @endif
   </div>
 
 
