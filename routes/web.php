@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopCreationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StrukController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:user')->group(function () {
         Route::get('/filter/{category}', [UserController::class, 'filterByCategory'])->name('product.filter');
         Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+        Route::get('/profile', [ProfileController::class, "index"])->name('profile.index');
+        Route::get('/struk', [StrukController::class, 'preview'])->name('struk');
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -74,4 +78,5 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 });

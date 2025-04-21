@@ -87,10 +87,31 @@
     }
 
 
+    .btn-outline-light {
+      background-color: transparent;
+      border: 2px solid var(#fff);
+      color: var(#fff);
+    }
+
+    .btn-outline-light:hover {
+      background-color: transparent;
+      color: white;
+    }
+
     .product-price {
       font-size: 1rem;
       color: var(--navy);
     }
+
+    .dropdown-item {
+      color: #000 !important; /* Mengatur warna teks menjadi hitam */
+    }
+
+    .dropdown-item:hover {
+      background-color: #f1f1f1; /* Menambahkan efek hover dengan latar belakang terang */
+      color: #007bff; /* Mengubah warna teks saat hover */
+    }
+
   </style>
 </head>
 
@@ -102,13 +123,31 @@
         <div class="logo-placeholder me-2"></div>
         <span class="fw-bold">shop</span>
       </div>
-
-      <form action="{{ route('logout') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-      </form>
+  
+      <!-- Dropdown Menu with Avatar Icon -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <!-- Avatar Icon (can replace with an image of the user) -->
+          <div class="rounded-circle" style="width: 30px; height: 30px; background-color: #fff; background-image: url('https://via.placeholder.com/30'); background-size: cover; margin-right: 8px;"></div>
+          <span>{{ auth()->user()->username }}</span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="{{ route('profile.index') }}">
+              <i class="bi bi-person-fill"></i> Profile
+            </a></li>
+          <li>
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="dropdown-item">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
-  </nav>
+  </nav>  
+  
 
   <!-- Main Content -->
   <div class="container my-4">
@@ -116,6 +155,9 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-3 text-navy">📋 Product Page</h2>
+      <a href="{{ route('struk') }}" class="btn btn-navy-outline">
+        🧾 Lihat Struk Sementara
+      </a>           
       <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
         🛒
         <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -157,8 +199,6 @@
       </div>
     </div>
   </div>
-
-  <x-modal-shopCreation />
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
