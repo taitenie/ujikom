@@ -21,7 +21,7 @@ class OrderController extends Controller
         $request->validate([
             'payment_type' => 'required|in:prepaid,postpaid',
             'payment_method' => 'required|in:bank,paypal,cash',
-            'bank_name' => 'required_if:payment_method,bank_transfer',
+            'bank_name' => 'required_if:payment_method,bank',
         ]);
 
         $cart = Cart::with('items.product')->where('user_id', Auth::id())->first();
@@ -45,6 +45,9 @@ class OrderController extends Controller
                 'quantity' => $cartItem->quantity,
                 'price' => $cartItem->product->price,
             ]);
+
+            $cartItem->product->stock -= $cartItem->quantity;
+            $cartItem->product->save();
         }
 
         // Bersihkan keranjang
@@ -104,6 +107,13 @@ class OrderController extends Controller
         }
 
         $order->update(['status' => 'cancelled']);
+
+        // Kembalikan stok produk
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            $product->stock += $item->quantity;
+            $product->save();
+        }
 
         return redirect()->back()->with('success', 'Order berhasil dibatalkan.');
     }

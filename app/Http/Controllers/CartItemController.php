@@ -47,34 +47,23 @@ class CartItemController extends Controller
     public function update(Request $request, CartItem $item)
     {
         $request->validate([
-            'action' => 'required|in:increase,decrease',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         if ($item->cart->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $message = 'Cart updated.';
-        $deleted = false;
+        $item->update([
+            'quantity' => $request->quantity,
+        ]);
 
-        if ($request->action === 'increase') {
-            $item->increment('quantity');
-        } elseif ($request->action === 'decrease') {
-            if ($item->quantity > 1) {
-                $item->decrement('quantity');
-            } else {
-                $deleted = true;
-                $item->delete();
-                $message = 'Item removed from cart.';
-            }
-        }
-
-        $cart = $item->cart;
+        $cart = $item->cart->fresh();
+        $item = $item->fresh();
 
         return response()->json([
             'cartCount' => $cart->items->count(),
-            'message' => $message,
-            'deleted' => $deleted,
+            'message' => 'Cart updated.',
             'itemId' => $item->id,
             'itemQuantity' => $item->quantity,
             'itemTotal' => $item->product->price * $item->quantity,
@@ -82,7 +71,6 @@ class CartItemController extends Controller
             'cartTotalPrice' => $cart->items->sum(fn($i) => $i->product->price * $i->quantity),
         ]);
     }
-
 
     // Hapus item dari cart
     public function destroy(CartItem $item)

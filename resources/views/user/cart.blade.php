@@ -120,16 +120,13 @@
             <td>Rp{{ number_format($item->product->price, 0, ',', '.') }}</td>
             <td>
               <div id="item-{{ $item->id }}" class="d-flex align-items-center gap-2">
-                <div class="btn-group" role="group">
-                  <button class="btn-update-qty btn btn-sm btn-outline-secondary"
-                    data-id="{{ $item->id }}"
-                    data-action="decrease">-</button>
+                <div class="quantity-wrapper d-flex align-items-center gap-2" data-id="{{ $item->id }}">
+                  <span class="quantity-display">{{ $item->quantity }}</span>
+                  <input type="number" class="form-control form-control-sm quantity-edit d-none" value="{{ $item->quantity }}" min="1" style="width: 80px;">
 
-                  <span class="px-2" id="qty-{{ $item->id }}">{{ $item->quantity }}</span>
-
-                  <button class="btn-update-qty btn btn-sm btn-outline-secondary"
-                    data-id="{{ $item->id }}"
-                    data-action="increase">+</button>
+                  <button class="btn btn-sm btn-outline-secondary btn-edit">✏️</button>
+                  <button class="btn btn-sm btn-success d-none btn-confirm">✅</button>
+                  <button class="btn btn-sm btn-danger d-none btn-cancel">❌</button>
                 </div>
               </div>
     </div>
@@ -196,6 +193,29 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const paymentMethodSelect = document.getElementById('payment_method');
+      const bankNameInput = document.getElementById('bank_name');
+
+      function toggleBankNameRequirement() {
+        if (paymentMethodSelect.value === 'bank') {
+          bankNameInput.required = true;
+          bankNameInput.parentElement.querySelector('label').innerHTML = 'Bank Name <span class="text-danger">*</span>';
+        } else {
+          bankNameInput.required = false;
+          bankNameInput.parentElement.querySelector('label').innerHTML = 'Bank Name (Opsional)';
+        }
+      }
+
+      // Initial check on page load
+      toggleBankNameRequirement();
+
+      // Listen to changes
+      paymentMethodSelect.addEventListener('change', toggleBankNameRequirement);
+    });
+  </script>
+
+  <script>
     function numberFormat(number) {
       if (typeof number !== 'number' || isNaN(number)) {
         return '0'; // Kembalikan nilai default jika bukan angka
@@ -204,59 +224,84 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const buttons = document.querySelectorAll('.btn-update-qty');
+      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-      buttons.forEach(button => {
-        button.addEventListener('click', () => {
-          const itemId = button.dataset.id;
-          const action = button.dataset.action;
-          const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      document.querySelectorAll('.quantity-wrapper').forEach(wrapper => {
+        const id = wrapper.dataset.id;
+        const display = wrapper.querySelector('.quantity-display');
+        const input = wrapper.querySelector('.quantity-edit');
+        const btnEdit = wrapper.querySelector('.btn-edit');
+        const btnConfirm = wrapper.querySelector('.btn-confirm');
+        const btnCancel = wrapper.querySelector('.btn-cancel');
 
-          fetch(`/cart/items/${itemId}`, {
-              method: 'POST',
+        let originalValue = input.value;
+
+        btnEdit.addEventListener('click', () => {
+          display.classList.add('d-none');
+          input.classList.remove('d-none');
+          btnEdit.classList.add('d-none');
+          btnConfirm.classList.remove('d-none');
+          btnCancel.classList.remove('d-none');
+        });
+
+        btnCancel.addEventListener('click', () => {
+          input.value = originalValue;
+          input.classList.add('d-none');
+          display.classList.remove('d-none');
+          btnEdit.classList.remove('d-none');
+          btnConfirm.classList.add('d-none');
+          btnCancel.classList.add('d-none');
+        });
+
+        btnConfirm.addEventListener('click', () => {
+          const newQuantity = parseInt(input.value);
+          if (isNaN(newQuantity) || newQuantity < 1) {
+            input.value = originalValue;
+            return alert('Minimum quantity is 1');
+          }
+
+          fetch(`/cart/items/${id}`, {
+              method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': token,
-                'X-HTTP-Method-Override': 'PATCH'
+                'X-CSRF-TOKEN': token
               },
               body: JSON.stringify({
-                action: action
+                quantity: newQuantity
               })
             })
             .then(res => res.json())
             .then(data => {
-              const qtySpan = document.getElementById(`qty-${itemId}`);
-              const row = qtySpan.closest('tr');
+              originalValue = newQuantity;
+              display.textContent = newQuantity;
+              input.classList.add('d-none');
+              display.classList.remove('d-none');
+              btnEdit.classList.remove('d-none');
+              btnConfirm.classList.add('d-none');
+              btnCancel.classList.add('d-none');
 
-              console.log(data);
+              // Update total per item
+              const row = wrapper.closest('tr');
+              const totalCell = row.querySelector('td:nth-child(4)');
+              totalCell.textContent = 'Rp' + numberFormat(data.itemTotal);
 
-              if (data.deleted) {
-                row.remove();
-              } else {
-                qtySpan.textContent = data.itemQuantity;
-
-                // Update total harga produk
-                const totalCell = row.querySelector('td:nth-child(4)');
-                totalCell.textContent = 'Rp' + numberFormat(data.itemTotal);
-              }
-
-              // Update total quantity dan total harga cart
+              // Update cart summary
               const totalQty = document.querySelector('.cart-summary h5 strong');
               const totalPrice = document.querySelectorAll('.cart-summary h5 strong')[1];
-
               if (totalQty && totalPrice) {
                 totalQty.textContent = data.cartTotalQuantity;
                 totalPrice.textContent = 'Rp' + numberFormat(data.cartTotalPrice);
               }
 
-              // Update cart count di navbar (jika ada)
+              // Update cart icon count
               const cartCount = document.getElementById('cart-count');
               if (cartCount) cartCount.textContent = data.cartCount;
-            })
+            });
         });
       });
     });
   </script>
+
 </body>
 
 </html>
