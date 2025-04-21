@@ -38,7 +38,7 @@ class CartItemController extends Controller
         if ($totalRequested > $product->stock) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Jumlah melebihi stok yang tersedia.'
+                'message' => 'Jumlah melebihi stok yang tersedia.',
             ], 400);
         }
 
@@ -53,7 +53,9 @@ class CartItemController extends Controller
         }
 
         return response()->json([
-            'cartCount' => $cart->items->count()
+            'status' => 'success',
+            'message' => 'Produk berhasil ditambahkan ke keranjang.',
+            'cartCount' => $cart->items->count(),
         ]);
     }
 

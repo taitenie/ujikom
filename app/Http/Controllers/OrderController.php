@@ -69,7 +69,8 @@ class OrderController extends Controller
         $startTime = microtime(true);
         $startMemory = memory_get_usage(); // Mulai pengukuran memori
 
-        $orders = Order::with('user')->get();
+        // Ambil order milik user yang sedang login
+        $orders = Order::with('user')->where('user_id', Auth::id())->get();
 
         $endTime = microtime(true); // Akhir pengukuran waktu
         $executionTime = $endTime - $startTime; // Hitung waktu eksekusi

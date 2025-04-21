@@ -86,6 +86,21 @@
   <div class="container my-5">
     <div class="row">
       <h2 class="text-navy mb-3">📦 Product Detail</h2>
+
+      @if (session('success'))
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @endif
+
+      @if (session('error'))
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      @endif
+
       <div class="col-md-6">
         @if ($product->image)
         <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid rounded shadow-sm" alt="{{ $product->name }}">
@@ -99,10 +114,11 @@
         <div class="text-price mb-3">Rp{{ number_format($product->price, 0, ',', '.') }}</div>
         <p>{{ $product->description }}</p>
 
-        <form action="{{ route('cart.items.store', $product->id) }}" method="POST" class="mt-3">
+        <form action="{{ route('cart.items.store') }}" method="POST" class="mt-3">
           @csrf
+          <input type="hidden" name="product_id" value="{{ $product->id }}">
           <div class="input-group" style="max-width: 200px;">
-            <input type="number" name="quantity" class="form-control" value="1" min="1">
+            <input type="number" name="quantity" class="form-control" value="1" min="1" data-stock="{{ $product->stock }}">
             <button class="btn btn-navy" type="submit">Add to Cart</button>
           </div>
         </form>
@@ -113,6 +129,16 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Tambahkan atribut data-stock pada input quantity
+    document.querySelector('input[name="quantity"]').addEventListener('input', function() {
+      const maxStock = this.getAttribute('data-stock'); // Ambil nilai stok dari atribut data-stock
+      if (this.value > maxStock) {
+        this.value = maxStock;
+        alert('Quantity exceeds available stock!');
+      }
+    });
+  </script>
 </body>
 
 </html>
