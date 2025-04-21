@@ -12,6 +12,8 @@ use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopCreationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StrukController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +70,8 @@ Route::middleware(['auth'])->group(function () {
             Route::patch('/items/{item}', [CartItemController::class, 'update'])->name('cart.items.update');
             Route::delete('/items/{item}', [CartItemController::class, 'destroy'])->name('cart.items.destroy');
         });
+        Route::get('/profile', [ProfileController::class, "index"])->name('profile.index');
+        Route::get('/struk', [StrukController::class, 'preview'])->name('struk');
     });
 
     Route::middleware('role:admin')->group(function () {
@@ -81,4 +85,5 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 });
