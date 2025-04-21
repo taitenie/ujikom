@@ -8,6 +8,10 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use App\Mail\OrderReceiptMail;
+use Illuminate\Support\Facades\Mail;
+
 
 class OrderController extends Controller
 {
@@ -43,10 +47,18 @@ class OrderController extends Controller
             ]);
         }
 
+        // Bersihkan keranjang
         $cart->items()->delete();
         $cart->delete();
 
-        return redirect()->route('struk.show', ['struk' => $order->id])->with('success', 'Checkout successful. Your order is being processed.');
+        // Generate PDF dari view struk.blade.php
+        $pdf = PDF::loadView('user.struk', ['order' => $order]);
+
+        // Kirim email ke user dengan PDF
+        Mail::to(Auth::user()->email)->send(new OrderReceiptMail($pdf));
+
+        return redirect()->route('struk.show', ['struk' => $order->id])
+            ->with('success', 'Checkout berhasil. Struk telah dikirim ke email Anda.');
     }
 
     public function index()
