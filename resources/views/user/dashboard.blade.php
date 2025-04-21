@@ -161,17 +161,17 @@
         <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
           🛒
           <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ auth()->user()->cart ? count(auth()->user()->cart->items) : 0 }}
+            {{ auth()->user()->cart ? auth()->user()->cart->items->count() : 0 }}
           </span>
         </a>
-        <a href=/ class="btn position-relative btn-outline-dark">
+        <a href="{{ route('orders.index') }}" class="btn position-relative btn-outline-dark">
           📦
           <span id="order-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ 1 }}
+            {{ auth()->user()->orders ? auth()->user()->orders->count() : 0 }}
           </span>
         </a>
       </div>
-    </div>    
+    </div>
 
     <div class="row">
       <!-- Product List -->
@@ -213,12 +213,12 @@
             Product Category
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark">All</a>
+            <li class="list-group-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+              <a href="{{ route('dashboard') }}" class="text-decoration-none text-dark stretched-link">All</a>
             </li>
             @foreach ($categories as $category)
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <a href="{{ route('product.filter', $category->id) }}" class="text-decoration-none text-dark">
+            <li class="list-group-item position-relative d-flex justify-content-between align-items-center {{ request()->is('filter/'.$category->id) ? 'active' : '' }}">
+              <a href="{{ route('product.filter', $category->id) }}" class="text-decoration-none text-dark stretched-link">
                 {{ $category->name }}
               </a>
               <span class="badge bg-secondary">{{ $category->products_count }}</span>

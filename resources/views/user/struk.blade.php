@@ -111,7 +111,7 @@
 </head>
 
 <body>
-  <a class="btn btn-primary absolute" href="{{ route('dashboard') }}" role="button">Kembali</a>
+  <a class="btn btn-primary absolute" href="{{ back() }}" role="button">Kembali</a>
 
   <div class="container">
     <div class="header">

@@ -71,11 +71,11 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/checkout', [OrderController::class, 'checkout'])->name('cart.checkout');
         });
 
-        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+        Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
         Route::get('/profile', [ProfileController::class, "index"])->name('profile.index');
-        Route::get('/struk/{struk}', [StrukController::class, 'index'])->name('struk.index');
+        Route::get('/struk/{struk}', [StrukController::class, 'show'])->name('struk.show');
     });
 
     Route::middleware('role:admin')->group(function () {

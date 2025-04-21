@@ -49,15 +49,23 @@ class OrderController extends Controller
         return redirect()->route('struk.index', ['order' => $order->id])->with('success', 'Checkout successful. Your order is being processed.');
     }
 
-    // Menampilkan halaman detail order
-    public function show(Order $order)
+    public function index()
     {
-        // Pastikan hanya user yang memiliki order yang bisa melihatnya
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
+        $orders = Order::with('user')->get();
+
+        return view('user.orders.index', compact('orders'));
+    }
+
+    public function show($id)
+    {
+        $order = Order::with(['user', 'items.product'])->find($id);
+
+        // Pastikan order hanya bisa diakses oleh pemiliknya
+        if (!$order || $order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this order.');
         }
 
-        return view('user.orders.show', compact('order'));
+        return view('user.struk', compact('order'));
     }
 
     public function cancel(Order $order)
@@ -96,13 +104,5 @@ class OrderController extends Controller
         $order->save();
 
         return redirect()->route('orders.index')->with('success', 'Order status updated.');
-    }
-
-    //admin
-    public function index()
-    {
-        $orders = Order::with('user')->get();
-
-        return view('users.orders.index', compact('orders'));
     }
 }
