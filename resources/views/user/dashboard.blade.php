@@ -104,14 +104,16 @@
     }
 
     .dropdown-item {
-      color: #000 !important; /* Mengatur warna teks menjadi hitam */
+      color: #000 !important;
+      /* Mengatur warna teks menjadi hitam */
     }
 
     .dropdown-item:hover {
-      background-color: #f1f1f1; /* Menambahkan efek hover dengan latar belakang terang */
-      color: #007bff; /* Mengubah warna teks saat hover */
+      background-color: #f1f1f1;
+      /* Menambahkan efek hover dengan latar belakang terang */
+      color: #007bff;
+      /* Mengubah warna teks saat hover */
     }
-
   </style>
 </head>
 
@@ -123,7 +125,7 @@
         <div class="logo-placeholder me-2"></div>
         <span class="fw-bold">shop</span>
       </div>
-  
+
       <!-- Dropdown Menu with Avatar Icon -->
       <div class="dropdown">
         <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -146,8 +148,8 @@
         </ul>
       </div>
     </div>
-  </nav>  
-  
+  </nav>
+
 
   <!-- Main Content -->
   <div class="container my-4">
@@ -155,9 +157,6 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-3 text-navy">📋 Product Page</h2>
-      <a href="{{ route('struk') }}" class="btn btn-navy-outline">
-        🧾 Lihat Struk Sementara
-      </a>           
       <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">
         🛒
         <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">

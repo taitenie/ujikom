@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopCreationController;
 use App\Http\Controllers\UserController;
@@ -62,28 +63,27 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('cart')->group(function () {
             Route::get('/', [CartController::class, 'index'])->name('cart.index');
-            Route::post('/', [CartController::class, 'store'])->name('cart.store');
-            Route::patch('/item/{item}', [CartController::class, 'update'])->name('cart.update');
-            Route::delete('/item/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
 
             Route::post('/items', [CartItemController::class, 'store'])->name('cart.items.store');
             Route::patch('/items/{item}', [CartItemController::class, 'update'])->name('cart.items.update');
             Route::delete('/items/{item}', [CartItemController::class, 'destroy'])->name('cart.items.destroy');
+
+            Route::post('/checkout', [OrderController::class, 'checkout'])->name('cart.checkout');
         });
+
+        Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
         Route::get('/profile', [ProfileController::class, "index"])->name('profile.index');
-        Route::get('/struk', [StrukController::class, 'preview'])->name('struk');
+        Route::get('/struk/{struk}', [StrukController::class, 'index'])->name('struk.index');
     });
 
     Route::middleware('role:admin')->group(function () {
         Route::resource('/users', UserManagementController::class);
-        Route::resource('/orders', UserManagementController::class);
+        // Route::resource('/orders', OrderController::class)->only(['index', 'show']);
         Route::resource('/categories', CategoryController::class);
         Route::resource('/shops', ShopCreationController::class);
     });
 
-
-
-
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
 });

@@ -156,6 +156,35 @@
       </strong>
     </h5>
   </div>
+
+  <form action="{{ route('cart.checkout') }}" method="POST" class="mt-4">
+    @csrf
+
+    <div class="mb-3">
+      <label for="payment_type" class="form-label">Payment Type</label>
+      <select name="payment_type" id="payment_type" class="form-select" required>
+        <option value="prepaid">Prepaid</option>
+        <option value="postpaid">Postpaid</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="payment_method" class="form-label">Payment Method</label>
+      <select name="payment_method" id="payment_method" class="form-select" required>
+        <option value="bank">Bank Transfer</option>
+        <option value="paypal">Paypal</option>
+        <option value="cash">Cash</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="bank_name" class="form-label">Bank Name (Opsional)</label>
+      <input type="text" name="bank_name" id="bank_name" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-navy">Checkout</button>
+  </form>
+
   @else
   <div class="alert alert-info mt-4" role="alert">
     Your cart is empty.

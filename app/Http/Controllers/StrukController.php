@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StrukController extends Controller
 {
-    public function preview()
+    public function index($struk)
     {
-        return view('user.struk'); // pastikan file struk.blade.php ada di resources/views/
+        $order = Order::with('items.product', 'user')->findOrFail($struk);
+        return view('user.struk', compact('order'));
     }
 }
-

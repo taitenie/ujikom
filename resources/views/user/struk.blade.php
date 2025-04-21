@@ -1,16 +1,34 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <title>Struk Belanja</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
+    :root {
+      --navy: #001f3f;
+      --navy-hover: #003366;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: #f5f7fa;
       margin: 30px;
       color: #333;
       font-size: 14px;
+    }
+
+    .btn-primary {
+      background-color: var(--navy);
+      border-color: var(--navy);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--navy-hover);
+      border-color: var(--navy-hover);
     }
 
     .container {
@@ -54,7 +72,8 @@
       border-collapse: collapse;
     }
 
-    .tabel-produk th, .tabel-produk td {
+    .tabel-produk th,
+    .tabel-produk td {
       border: 1px solid #ddd;
       padding: 10px;
       text-align: left;
@@ -90,7 +109,10 @@
     }
   </style>
 </head>
+
 <body>
+  <a class="btn btn-primary absolute" href="{{ route('dashboard') }}" role="button">Kembali</a>
+
   <div class="container">
     <div class="header">
       TOKO ALAT KESEHATAN
@@ -100,20 +122,28 @@
     <div class="info">
       <table>
         <tr>
-          <td><strong>User ID:</strong></td><td>{{ auth()->user()->id }}</td>
-          <td><strong>Tanggal:</strong></td><td>{{ date('d-m-Y') }}</td>
+          <td><strong>User ID:</strong></td>
+          <td>{{ $order->user->id }}</td>
+          <td><strong>Tanggal:</strong></td>
+          <td>{{ $order->created_at->format('d-m-Y') }}</td>
         </tr>
         <tr>
-          <td><strong>Nama:</strong></td><td>{{ auth()->user()->username }}</td>
-          <td><strong>ID Paypal:</strong></td><td>__________________</td>
+          <td><strong>Nama:</strong></td>
+          <td>{{ $order->user->username }}</td>
+          <td><strong>ID Paypal:</strong></td>
+          <td>{{ $order->user->paypalId }}</td>
         </tr>
         <tr>
-          <td><strong>Alamat:</strong></td><td>__________________</td>
-          <td><strong>Nama Bank:</strong></td><td>__________________</td>
+          <td><strong>Alamat:</strong></td>
+          <td>{{ $order->user->address }}</td>
+          <td><strong>Nama Bank:</strong></td>
+          <td>{{ strtoupper($order->bank_name) ?? '-' }}</td>
         </tr>
         <tr>
-          <td><strong>No HP:</strong></td><td>__________________</td>
-          <td><strong>Metode Pembayaran:</strong></td><td>(Prepaid/Postpaid)</td>
+          <td><strong>No HP:</strong></td>
+          <td>{{ $order->user->number }}</td>
+          <td><strong>Metode Pembayaran:</strong></td>
+          <td>{{ ucfirst($order->payment_method) }} - {{ ucfirst($order->payment_type) }}</td>
         </tr>
       </table>
     </div>
@@ -129,18 +159,15 @@
           </tr>
         </thead>
         <tbody>
-          @php
-            $total = 0;
-            $no = 1;
-          @endphp
-          @foreach (session('cart', []) as $item)
+          @php $total = 0; @endphp
+          @foreach ($order->items as $index => $item)
           <tr>
-            <td>{{ $no++ }}.</td>
-            <td>{{ $item['name'] }} (ID: {{ $item['id'] }})</td>
-            <td>{{ $item['quantity'] }}</td>
-            <td>Rp. {{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}</td>
+            <td>{{ $index + 1 }}.</td>
+            <td>{{ $item->product->name ?? 'Produk Tidak Ditemukan' }} (ID: {{ $item->product->id ?? '-' }})</td>
+            <td>{{ $item->quantity }}</td>
+            <td>Rp. {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
           </tr>
-          @php $total += $item['price'] * $item['quantity']; @endphp
+          @php $total += $item->price * $item->quantity; @endphp
           @endforeach
         </tbody>
       </table>
@@ -154,5 +181,9 @@
       TANDATANGAN TOKO
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
+
+
 </html>
