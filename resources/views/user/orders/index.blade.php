@@ -142,6 +142,8 @@
         </tbody>
       </table>
     </div>
+    <p>Execution Time: {{ $executionTime }} seconds</p>
+    <p>Memory Usage: {{ number_format($memoryUsage / 1024, 2) }} KB</p>
     @else
     <div class="alert alert-info">You have no orders yet.</div>
     @endif

@@ -33,19 +33,19 @@
 
 <div class="sidebar">
   @php
-    $routes = [
-      ['name' => 'users.index', 'label' => 'Manage Users'],
-      ['name' => 'orders.index', 'label' => 'Incoming Orders'],
-      ['name' => 'categories.index', 'label' => 'Manage Categories'],
-      ['name' => 'shops.index', 'label' => 'Approve Shops'],
-    ];
+  $routes = [
+  ['name' => 'users.index', 'label' => 'Manage Users'],
+  ['name' => 'admin.orders.index', 'label' => 'Incoming Orders'],
+  ['name' => 'categories.index', 'label' => 'Manage Categories'],
+  ['name' => 'shops.index', 'label' => 'Approve Shops'],
+  ];
   @endphp
 
   @foreach ($routes as $route)
-    <a 
-      href="{{ route($route['name']) }}" 
-      class="{{ request()->routeIs($route['name']) ? 'active' : '' }}">
-      {{ $route['label'] }}
-    </a>
+  <a
+    href="{{ route($route['name']) }}"
+    class="{{ request()->routeIs($route['name']) ? 'active' : '' }}">
+    {{ $route['label'] }}
+  </a>
   @endforeach
 </div>

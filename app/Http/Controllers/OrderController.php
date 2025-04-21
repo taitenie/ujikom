@@ -51,9 +51,18 @@ class OrderController extends Controller
 
     public function index()
     {
+        $startTime = microtime(true);
+        $startMemory = memory_get_usage(); // Mulai pengukuran memori
+
         $orders = Order::with('user')->get();
 
-        return view('user.orders.index', compact('orders'));
+        $endTime = microtime(true); // Akhir pengukuran waktu
+        $executionTime = $endTime - $startTime; // Hitung waktu eksekusi
+
+        $endMemory = memory_get_usage(); // Akhir pengukuran memori
+        $memoryUsage = $endMemory - $startMemory; // Hitung memori yang digunakan
+
+        return view('user.orders.index', compact('orders', 'executionTime', 'memoryUsage'));
     }
 
     public function show($id)

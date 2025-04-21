@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\OrderManagementController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -80,7 +81,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::resource('/users', UserManagementController::class);
-        // Route::resource('/orders', OrderController::class)->only(['index', 'show']);
+
+        Route::get('/orders', [OrderManagementController::class, 'index'])->name('admin.orders.index');
+        Route::get('/orders/{order}', [OrderManagementController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/orders/{order}/{status}', [OrderManagementController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+        
         Route::resource('/categories', CategoryController::class);
         Route::resource('/shops', ShopCreationController::class);
     });
