@@ -76,22 +76,51 @@
       border: 1px solid #dee2e6;
       border-radius: 0.5rem;
     }
+
+    .dropdown-item {
+      color: #000 !important;
+      /* Mengatur warna teks menjadi hitam */
+    }
+
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+      /* Menambahkan efek hover dengan latar belakang terang */
+      color: #007bff;
+      /* Mengubah warna teks saat hover */
+    }
+
   </style>
 </head>
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-2">
+  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-        <div class="logo-placeholder me-2"></div>
-        <span class="fw-bold">shop</span>
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
+        <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
-
-      <form action="{{ route('logout') }}" method="POST" class="d-inline">
-        @csrf
-        <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-      </form>
+  
+      <!-- Dropdown Menu with Avatar Icon -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="rounded-circle" style="width: 35px; height: 35px; background-color: #fff; background-image: url('https://via.placeholder.com/35'); background-size: cover; margin-right: 8px;"></div>
+          <span class="fs-6">{{ auth()->user()->username }}</span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="{{ route('profile.index') }}">
+              <i class="bi bi-person-fill"></i> Profile
+            </a></li>
+          <li>
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+              @csrf
+              <button type="submit" class="dropdown-item">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </button>
+            </form>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 
@@ -119,21 +148,22 @@
             <td>{{ $item->product->name }}</td>
             <td>Rp{{ number_format($item->product->price, 0, ',', '.') }}</td>
             <td>
-              <div id="item-{{ $item->id }}" class="d-flex align-items-center gap-2">
+              <div id="item-{{ $item->id }}" class="d-flex align-items-center gap-2" data-stock="{{ $item->product->stock }}">
                 <div class="btn-group" role="group">
                   <button class="btn-update-qty btn btn-sm btn-outline-secondary"
+                    id="btn-decrease-{{ $item->id }}"
                     data-id="{{ $item->id }}"
                     data-action="decrease">-</button>
-
+            
                   <span class="px-2" id="qty-{{ $item->id }}">{{ $item->quantity }}</span>
-
+            
                   <button class="btn-update-qty btn btn-sm btn-outline-secondary"
+                    id="btn-increase-{{ $item->id }}"
                     data-id="{{ $item->id }}"
                     data-action="increase">+</button>
                 </div>
               </div>
-    </div>
-    </td>
+            </td>            
     <td>Rp{{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}</td>
     <td>
       <form action="{{ route('cart.items.destroy', $item) }}" method="POST">
@@ -196,6 +226,19 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    function toggleQtyButtons(itemId, qty, stock) {
+      const btnDec = document.getElementById(`btn-decrease-${itemId}`);
+      const btnInc = document.getElementById(`btn-increase-${itemId}`);
+
+      if (btnDec) {
+        btnDec.disabled = qty <= 1;
+      }
+
+      if (btnInc) {
+        btnInc.disabled = qty >= stock;
+      }
+    }
+
     function numberFormat(number) {
       if (typeof number !== 'number' || isNaN(number)) {
         return '0'; // Kembalikan nilai default jika bukan angka
@@ -204,6 +247,16 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.btn-update-qty').forEach(btn => {
+        const itemId = btn.dataset.id;
+        const qty = parseInt(document.getElementById(`qty-${itemId}`).textContent);
+
+        const wrapper = document.getElementById(`item-${itemId}`);
+        const stock = parseInt(wrapper.dataset.stock); 
+
+        toggleQtyButtons(itemId, qty, stock);
+      });
+
       const buttons = document.querySelectorAll('.btn-update-qty');
 
       buttons.forEach(button => {
@@ -238,6 +291,11 @@
                 // Update total harga produk
                 const totalCell = row.querySelector('td:nth-child(4)');
                 totalCell.textContent = 'Rp' + numberFormat(data.itemTotal);
+
+                // ✅ Update tombol qty
+                const btnInc = document.getElementById(`btn-increase-${itemId}`);
+                const stock = btnInc ? parseInt(btnInc.dataset.stock) : 0;
+                toggleQtyButtons(itemId, data.itemQuantity, stock);
               }
 
               // Update total quantity dan total harga cart
@@ -253,6 +311,7 @@
               const cartCount = document.getElementById('cart-count');
               if (cartCount) cartCount.textContent = data.cartCount;
             })
+
         });
       });
     });

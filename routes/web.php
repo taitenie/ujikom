@@ -82,10 +82,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::resource('/users', UserManagementController::class);
 
-        Route::get('/orders', [OrderManagementController::class, 'index'])->name('admin.orders.index');
-        Route::get('/orders/{order}', [OrderManagementController::class, 'show'])->name('admin.orders.show');
-        Route::patch('/orders/{order}/{status}', [OrderManagementController::class, 'updateStatus'])->name('admin.orders.updateStatus');
-        
+        Route::get('/order', [OrderManagementController::class, 'index'])->name('admin.orders.index');
+        Route::get('/order/{order}', [OrderManagementController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/order/{order}/{status}', [OrderManagementController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+
         Route::resource('/categories', CategoryController::class);
         Route::resource('/shops', ShopCreationController::class);
     });
