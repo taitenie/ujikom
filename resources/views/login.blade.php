@@ -62,13 +62,16 @@
 <body>
     <div class="login-box">
         <div class="d-flex align-items-center mb-4">
-            <div class="logo-box">LOGO</div>
+            <div class="logo-box me-3 d-flex align-items-center justify-content-center" 
+                 style="width: 60px; height: 60px; background-color: #f8f9fa; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                <img src="images/logo.png" alt="Logo" style="max-height: 40px; max-width: 100%;">
+            </div>
             <div class="welcome-text">
                 <span class="d-block">✨ Selamat Datang!</span>
-                <span class="d-block">Toko Alat Kesehatan</span>
+                <span class="d-block fw-bold fs-5">HEALTHBUD</span>
                 <small class="text-muted">Masuk untuk mulai berbelanja.</small>
             </div>
-        </div>
+        </div>           
 
         @if (session('error'))
         <div class="alert alert-danger mt-3 text-center">

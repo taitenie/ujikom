@@ -37,7 +37,6 @@
     }
 
     .navbar-custom form button:hover {
-      background-color: #dc3545;
       color: white;
     }
 
@@ -89,8 +88,8 @@
 
     .btn-outline-light {
       background-color: transparent;
-      border: 2px solid var(#fff);
-      color: var(#fff);
+      border: 2px solid #fff;
+      color: #fff;
     }
 
     .btn-outline-light:hover {
@@ -105,14 +104,28 @@
 
     .dropdown-item {
       color: #000 !important;
-      /* Mengatur warna teks menjadi hitam */
+      background-color: transparent;
+      width: 100%;
+      text-align: left;
+      padding: 0.25rem 1rem;
+      border: none;
+      background: none;
     }
 
+    /* Hover style */
     .dropdown-item:hover {
       background-color: #f1f1f1;
-      /* Menambahkan efek hover dengan latar belakang terang */
       color: #007bff;
-      /* Mengubah warna teks saat hover */
+      cursor: pointer;
+    }
+
+    /* Menjaga warna teks tetap putih dan hindari background putih saat hover */
+    .btn-outline-light.dropdown-toggle:hover,
+    .btn-outline-light.dropdown-toggle:focus,
+    .btn-outline-light.dropdown-toggle:active {
+      background-color: var(--navy); /* atau warna lain yang cocok */
+      color: #fff;
+      border-color: #fff; /* Opsional: supaya border tetap kelihatan */
     }
 
     .card-img-top {
@@ -164,7 +177,7 @@
               @csrf
               <button type="submit" class="dropdown-item">
                 Logout
-              </button>
+              </button>              
             </form>
           </li>
         </ul>
@@ -180,7 +193,7 @@
   <div class="container mt-3" id="alert-container"></div>
   <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="mb-3 text-navy">📋 Product Page</h2>
+      <h2 class="mb-4 text-navy">📋 Product Page</h2>
       @auth
       <div class="d-flex gap-3">
         <a href="{{ route('cart.index') }}" class="btn position-relative btn-outline-dark">

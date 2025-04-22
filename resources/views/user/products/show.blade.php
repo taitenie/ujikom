@@ -54,38 +54,87 @@
       font-size: 1.8rem;
       font-weight: bold;
     }
+
+    .dropdown-item {
+      color: #000 !important;
+      background-color: transparent;
+      width: 100%;
+      text-align: left;
+      padding: 0.25rem 1rem;
+      border: none;
+      background: none;
+    }
+
+    /* Hover style */
+    .dropdown-item:hover {
+      background-color: #f1f1f1;
+      color: #007bff;
+      cursor: pointer;
+    }
+
+    .btn-outline-light {
+      background-color: transparent;
+      border: 2px solid #fff;
+      color: #fff;
+    }
+
+    .btn-outline-light:hover {
+      background-color: transparent;
+      color: white;
+    }
+    
+    /* Menjaga warna teks tetap putih dan hindari background putih saat hover */
+    .btn-outline-light.dropdown-toggle:hover,
+    .btn-outline-light.dropdown-toggle:focus,
+    .btn-outline-light.dropdown-toggle:active {
+      background-color: var(--navy); /* atau warna lain yang cocok */
+      color: #fff;
+      border-color: #fff; /* Opsional: supaya border tetap kelihatan */
+    }
+    
   </style>
 </head>
 
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-2">
+  <nav class="navbar navbar-expand-lg navbar-custom px-3 py-3">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center">
-        <div class="logo-placeholder me-2" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%;"></div>
-        <span class="fw-bold">shop</span>
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
+        <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
+
+      <!-- Dropdown Menu with Avatar Icon -->
       <div class="dropdown">
-        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-          {{ auth()->user()->username }}
+        @auth
+        <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="rounded-circle" style="width: 35px; height: 35px; background-color: #fff; background-image: url('https://via.placeholder.com/35'); background-size: cover; margin-right: 8px;"></div>
+          <span class="fs-6">{{ auth()->user()->username }}</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="{{ route('profile.index') }}">Profile</a></li>
+        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="{{ route('profile.index') }}">
+              Profile
+            </a></li>
           <li>
-            <form action="{{ route('logout') }}" method="POST">
+            <form action="{{ route('logout') }}" method="POST" class="d-inline">
               @csrf
-              <button type="submit" class="dropdown-item">Logout</button>
+              <button type="submit" class="dropdown-item">
+                Logout
+              </button>
             </form>
           </li>
         </ul>
+        @else
+        <a href="{{ route('login') }}" class="btn btn-sm btn-outline-light">Login</a>
+        @endauth
       </div>
     </div>
   </nav>
 
   <!-- Product Details -->
-  <div class="container my-5">
+  <div class="container my-4">
     <div class="row">
-      <h2 class="text-navy mb-3">📦 Product Detail</h2>
+      <h2 class="text-navy mb-3">🛍️ Product Detail</h2>
 
       @if (session('success'))
       <div class="alert alert-success alert-dismissible fade show" role="alert">
