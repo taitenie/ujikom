@@ -119,22 +119,32 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Order berhasil dibatalkan.');
     }
 
-    // Admin mengubah status order menjadi shipped
-    public function updateStatus(Order $order, $status)
+    public function updateStatus(Request $request, Order $order, $status)
     {
-        // Cek apakah yang mengakses adalah admin
-        if (!Auth::user()->is_admin) {
-            abort(403);
+        $user = Auth::user();
+
+        // Pastikan user adalah pemilik order
+        if ($order->user_id !== $user->id) {
+            abort(403, 'Unauthorized');
         }
 
         // Validasi status
-        if (!in_array($status, ['pending', 'shipped', 'received'])) {
-            abort(400);
+        if (!in_array($status, ['received'])) {
+            abort(400, 'Invalid status.');
+        }
+
+        // Simpan feedback jika ada
+        if ($status === 'received') {
+            $request->validate([
+                'feedback' => 'required|string|max:500',
+            ]);
+
+            $order->feedback = $request->feedback;
         }
 
         $order->status = $status;
         $order->save();
 
-        return redirect()->route('orders.index')->with('success', 'Order status updated.');
+        return redirect()->route('orders.index')->with('success', 'Order status updated successfully.');
     }
 }

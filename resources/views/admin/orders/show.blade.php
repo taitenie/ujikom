@@ -70,15 +70,30 @@
         </tbody>
       </table>
 
+      @if($order->status === 'received')
+      <div class="mt-4">
+        <h5>Customer Feedback:</h5>
+        <p>{{ $order->feedback }}</p>
+      </div>
+      @endif
+
       <div class="mt-4 d-flex justify-content-between align-items-center">
         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Back</a>
 
         <div>
+          @if($order->status === 'pending')
           <form action="{{ route('admin.orders.updateStatus', ['order' => $order->id, 'status' => 'shipped']) }}" method="POST" class="d-inline">
             @csrf
             @method('PATCH')
-            <button type="submit" class="btn btn-primary" {{ $order->status !== 'pending' ? 'disabled' : '' }}>Ship</button>
+            <button type="submit" class="btn btn-primary">Ship</button>
           </form>
+          @elseif($order->status === 'shipped')
+          <form action="{{ route('admin.orders.updateStatus', ['order' => $order->id, 'status' => 'arrived']) }}" method="POST" class="d-inline">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn btn-success">Arrived</button>
+          </form>
+          @endif
 
           <form action="{{ route('admin.orders.updateStatus', ['order' => $order->id, 'status' => 'cancelled']) }}" method="POST" class="d-inline">
             @csrf

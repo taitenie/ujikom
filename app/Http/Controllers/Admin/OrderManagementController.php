@@ -34,12 +34,18 @@ class OrderManagementController extends Controller
 
     public function updateStatus(Order $order, $status)
     {
-        if ($order->status !== 'pending') {
-            return redirect()->back()->with('error', 'Only pending orders can be updated.');
+        // Validasi status yang diizinkan
+        if (!in_array($status, ['shipped', 'cancelled', 'arrived'])) {
+            return redirect()->back()->with('error', 'Invalid status.');
         }
 
-        if (!in_array($status, ['shipped', 'cancelled'])) {
-            return redirect()->back()->with('error', 'Invalid status.');
+        // Cek aturan pembaruan status
+        if ($status === 'shipped' && $order->status !== 'pending') {
+            return redirect()->back()->with('error', 'Only pending orders can be marked as shipped.');
+        }
+
+        if ($status === 'arrived' && $order->status !== 'shipped') {
+            return redirect()->back()->with('error', 'Only shipped orders can be marked as arrived.');
         }
 
         // Perbarui status pesanan

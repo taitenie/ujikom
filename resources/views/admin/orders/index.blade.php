@@ -56,6 +56,10 @@
                 <span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span>
                 @elseif($order->status === 'shipped')
                 <span class="badge bg-primary">{{ ucfirst($order->status) }}</span>
+                @elseif($order->status === 'arrived')
+                <span class="badge bg-info text-dark">{{ ucfirst($order->status) }}</span>
+                @elseif($order->status === 'received')
+                <span class="badge bg-success">{{ ucfirst($order->status) }}</span>
                 @elseif($order->status === 'cancelled')
                 <span class="badge bg-danger">{{ ucfirst($order->status) }}</span>
                 @endif

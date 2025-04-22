@@ -91,7 +91,7 @@
         <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: 50px; object-fit: cover;" class="rounded-circle me-3">
         <span class="fw-bold fs-4 text-light">HealthBud</span>
       </div>
-  
+
       <!-- Dropdown Menu with Avatar Icon -->
       <div class="dropdown">
         <button class="btn btn-sm btn-outline-light dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -146,6 +146,8 @@
               <span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span>
               @elseif($order->status === 'shipped')
               <span class="badge bg-primary">{{ ucfirst($order->status) }}</span>
+              @elseif($order->status === 'arrived')
+              <span class="badge bg-info text-dark">{{ ucfirst($order->status) }}</span>
               @elseif($order->status === 'received')
               <span class="badge bg-success">{{ ucfirst($order->status) }}</span>
               @elseif($order->status === 'cancelled')
@@ -155,17 +157,49 @@
             <td>{{ ucfirst($order->payment_type) }} / {{ ucfirst($order->payment_method) }}</td>
             <td>{{ $order->created_at->format('d M Y H:i') }}</td>
             <td>
-              <a href="{{ route('struk.show', $order->id) }}" class="btn btn-sm btn-navy">View</a>
+              @if($order->status === 'pending')
               <form action="{{ route('orders.cancel', $order->id) }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-sm btn-danger"
-                  onclick="return confirm('Are you sure you want to cancel this order?')"
-                  {{ $order->status !== 'pending' ? 'disabled' : '' }}>
+                  onclick="return confirm('Are you sure you want to cancel this order?')">
                   Cancel
                 </button>
               </form>
+              @elseif($order->status === 'arrived')
+              <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#feedbackModal-{{ $order->id }}">
+                Received
+              </button>
+              @elseif($order->status === 'received')
+              <p>Order Complete</p>
+              @endif
             </td>
           </tr>
+
+          <!-- Modal -->
+          <div class="modal fade" id="feedbackModal-{{ $order->id }}" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form action="{{ route('orders.updateStatus', ['order' => $order->id, 'status' => 'received']) }}" method="POST">
+                  @csrf
+                  @method('PATCH')
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel">Feedback for Order #{{ $order->id }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="feedback" class="form-label">Your Feedback</label>
+                      <textarea name="feedback" id="feedback" class="form-control" rows="4" required></textarea>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
           @endforeach
         </tbody>
       </table>

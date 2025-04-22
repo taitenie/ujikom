@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'shipped', 'received', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'shipped', 'received', 'cancelled', 'arrived'])->default('pending');
             $table->string('bank_name')->nullable();
             $table->enum('payment_type', ['prepaid', 'postpaid'])->nullable();
             $table->string('payment_method')->nullable();
+            $table->text('feedback')->nullable();
             $table->timestamps();
         });
     }
