@@ -115,7 +115,7 @@
 
   <div class="container">
     <div class="header">
-      TOKO ALAT KESEHATAN
+      HEALTHBUD
       <span>Laporan Belanja Anda</span>
     </div>
 
@@ -136,7 +136,7 @@
         <tr>
           <td><strong>Alamat:</strong></td>
           <td>{{ $order->user->address }}</td>
-          <td><strong>Nama Bank:</strong></td>
+          <td><strong>Nama Bank (Opsional):</strong></td>
           <td>{{ strtoupper($order->bank_name) ?? '-' }}</td>
         </tr>
         <tr>
@@ -178,7 +178,6 @@
     </div>
 
     <div class="footer">
-      TANDATANGAN TOKO
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

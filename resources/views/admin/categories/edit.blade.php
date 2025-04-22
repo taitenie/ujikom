@@ -16,6 +16,16 @@
       margin-left: 220px;
       padding: 30px;
     }
+
+    .btn-primary {
+      background-color: #001f3f;
+      border-color: #001f3f;
+    }
+
+    .btn-primary:hover {
+      background-color: #003366;
+      border-color: #003366;
+    }
   </style>
 </head>
 

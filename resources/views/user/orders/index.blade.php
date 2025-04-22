@@ -29,7 +29,6 @@
     }
 
     .navbar-custom form button:hover {
-      background-color: #dc3545;
       color: white;
     }
 
@@ -71,14 +70,39 @@
 
     .dropdown-item {
       color: #000 !important;
-      /* Mengatur warna teks menjadi hitam */
+      background-color: transparent;
+      width: 100%;
+      text-align: left;
+      padding: 0.25rem 1rem;
+      border: none;
+      background: none;
     }
 
+    /* Hover style */
     .dropdown-item:hover {
       background-color: #f1f1f1;
-      /* Menambahkan efek hover dengan latar belakang terang */
       color: #007bff;
-      /* Mengubah warna teks saat hover */
+      cursor: pointer;
+    }
+
+    .btn-outline-light {
+      background-color: transparent;
+      border: 2px solid #fff;
+      color: #fff;
+    }
+
+    .btn-outline-light:hover {
+      background-color: transparent;
+      color: white;
+    }
+    
+    /* Menjaga warna teks tetap putih dan hindari background putih saat hover */
+    .btn-outline-light.dropdown-toggle:hover,
+    .btn-outline-light.dropdown-toggle:focus,
+    .btn-outline-light.dropdown-toggle:active {
+      background-color: var(--navy); /* atau warna lain yang cocok */
+      color: #fff;
+      border-color: #fff; /* Opsional: supaya border tetap kelihatan */
     }
   </style>
 </head>
@@ -116,7 +140,7 @@
   </nav>
 
   <!-- Main Content -->
-  <div class="container my-5">
+  <div class="container my-4">
     <h2 class="mb-4 text-navy">📦 Your Orders</h2>
 
     <a href="/" class="btn btn-navy-outline mb-3">← Back to Home</a>
